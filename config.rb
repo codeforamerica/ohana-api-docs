@@ -19,6 +19,10 @@ activate :syntax
 activate :relative_assets
 set :relative_links, true
 
+# Activate the live reload functionality so that the browser refreshes
+# the site automatically when you update the markdown.
+activate :livereload
+
 # Build-specific configuration
 configure :build do
   # For example, change the Compass output style for deployment
