@@ -11,6 +11,11 @@ toc_footers:
 includes:
   - requests
   - authentication
+  - locations
+  - get_location
+  - post_location
+  - patch_location
+  - delete_location
   - pagination
   - errors
 
