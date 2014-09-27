@@ -12,7 +12,7 @@ curl --request POST "https://ohana-api-demo.herokuapp.com/api/locations/1/addres
   -H "X-Api-Token: your_secret_token"
 ```
 
-> When successful, the above command returns a `200` HTTP status code and JSON
+> When successful, the above command returns a `201` HTTP status code and JSON
 > structured like this:
 
 ```json

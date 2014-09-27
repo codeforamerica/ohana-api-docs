@@ -19,6 +19,10 @@ includes:
   - create_address
   - patch_address
   - delete_address
+  - get_location_faxes
+  - create_fax
+  - patch_fax
+  - delete_fax
   - organizations
   - get_organization
   - post_organization
