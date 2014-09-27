@@ -16,6 +16,12 @@ includes:
   - post_location
   - patch_location
   - delete_location
+  - organizations
+  - get_organization
+  - post_organization
+  - patch_organization
+  - delete_organization
+  - get_organization_locations
   - pagination
   - errors
 
