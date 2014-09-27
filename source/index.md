@@ -11,6 +11,7 @@ toc_footers:
 includes:
   - requests
   - authentication
+  - pagination
   - errors
 
 search: true
