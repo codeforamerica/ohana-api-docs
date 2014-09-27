@@ -16,6 +16,9 @@ includes:
   - post_location
   - patch_location
   - delete_location
+  - create_address
+  - patch_address
+  - delete_address
   - organizations
   - get_organization
   - post_organization
