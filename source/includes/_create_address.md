@@ -8,7 +8,7 @@ Ohanakapa.post('locations/1/address/', { street: 'New Street', city: 'Albequerqu
 ```
 
 ```shell
-curl --request PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1/address/1?street=New street&city=Albequerque&state=NM&zip=12345" \
+curl --request POST "https://ohana-api-demo.herokuapp.com/api/locations/1/address?street=New street&city=Albequerque&state=NM&zip=12345" \
   -H "X-Api-Token: your_secret_token"
 ```
 
