@@ -47,4 +47,8 @@ are in `source/index.md`, and the rest of the documentation is in various
 files in `source/includes`. As you make changes to any of the markdown files,
 the browser should automatically update.
 
-Learn more about [editing Slate markdown](https://github.com/tripit/slate/wiki/Markdown-Syntax), and [publishing the site](https://github.com/tripit/slate/wiki/Deploying-Slate).
+### Publish the website (for those who have write access to this repo)
+
+    rake publish
+
+Learn more about [editing Slate markdown](https://github.com/tripit/slate/wiki/Markdown-Syntax).
