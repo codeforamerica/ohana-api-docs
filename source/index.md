@@ -13,7 +13,7 @@ includes:
   - authentication
   - locations
   - get_location
-  - post_location
+  - create_location
   - patch_location
   - delete_location
   - create_address
@@ -29,6 +29,10 @@ includes:
   - patch_organization
   - delete_organization
   - get_organization_locations
+  - get_location_services
+  - create_service
+  - patch_service
+  - delete_service
   - pagination
   - errors
 
