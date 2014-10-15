@@ -13,8 +13,7 @@ Ohanakapa.locations
 ```
 
 ```shell
-curl "https://ohana-api-demo.herokuapp.com/api/locations" \
-  -H "User-Agent: MyClient/1.0.0"
+curl "https://ohana-api-demo.herokuapp.com/api/locations" -H "User-Agent: MyClient/1.0.0"
 ```
 
 > The above command returns JSON structured like this:
@@ -37,21 +36,25 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations" \
     "updated_at": "2014-09-10T08:21:14.853-07:00",
     "urls": [ ],
     "contacts_url": "https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/contacts",
-    "faxes_url": "https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/faxes",
     "services_url": "https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/services",
     "url": "https://ohana-api-demo.herokuapp.com/api/locations/new-location-test",
     "address": {
       "id": 28,
-      "street": "1290 Ridder Park Drive",
+      "street_1": "1290 Ridder Park Drive",
+      "street_2": null,
       "city": "San Francisco",
       "state": "CA",
-      "zip": "94103"
+      "postal_code": "94103"
     },
     "organization": {
       "id": 8,
+      "alternate_name": null,
+      "date_incorporated": null,
+      "description": "Test description",
+      "email": null,
       "name": "Admin Test Org",
       "slug": "admin-test-org",
-      "urls": [ ],
+      "website": null,
       "url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org",
       "locations_url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"
     },
@@ -78,16 +81,21 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations" \
     "url": "https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service",
     "address": {
       "id": 27,
-      "street": "155 9th St",
+      "street_1": "155 9th St",
+      "street_2": null,
       "city": "San Francisco",
       "state": "CA",
-      "zip": "94103"
+      "postal_code": "94103"
     },
     "organization": {
       "id": 8,
+      "alternate_name": null,
+      "date_incorporated": null,
+      "description": "Test description",
+      "email": null,
       "name": "Admin Test Org",
       "slug": "admin-test-org",
-      "urls": [ ],
+      "website": null,
       "url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org",
       "locations_url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"
     },
@@ -107,7 +115,7 @@ To access an API that serves a particular region, you would need to look up
 the appropriate endpoint. All known API deployments are listed in the
 [deployments](#live-deployments-of-ohana-api) section at the top of this page.
 
-### Query Parameters
+### URL Query Parameters
 
 Parameter | Default | Description
 --------- | ------- | -----------

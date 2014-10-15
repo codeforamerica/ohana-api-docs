@@ -13,8 +13,7 @@ Ohanakapa.get('locations/1/services')
 ```
 
 ```shell
-curl "https://ohana-api-demo.herokuapp.com/api/locations/1/services" \
-  -H "User-Agent: MyClient/1.0.0"
+curl "https://ohana-api-demo.herokuapp.com/api/locations/1/services" -H "User-Agent: MyClient/1.0.0"
 ```
 
 > The above command returns JSON structured like this:

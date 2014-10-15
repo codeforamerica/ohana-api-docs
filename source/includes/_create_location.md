@@ -1,14 +1,13 @@
 ## Create a new location
 
 ```ruby
-# Create a new location
-Ohanakapa.post("organizations/#{organization_id}/locations",
-  query: { name: 'New Location' })
+# Create a new location for organization with id 1
+Ohanakapa.post("organizations/1/locations",
+  query: { name: 'New Location', description: 'New description' })
 ```
 
 ```shell
-curl --request POST "https://ohana-api-demo.herokuapp.com/api/organizations/1/locations/?name=New Location" \
-  -H "X-Api-Token: your_secret_token"
+curl -X POST "https://ohana-api-demo.herokuapp.com/api/organizations/1/locations" -d '{"name":"New Location","description":"New description"}' -H "X-Api-Token: your_token" -H "Content-Type: application/json"
 ```
 
 > When successful, the above command returns a `201` HTTP status code and JSON
@@ -22,32 +21,34 @@ curl --request POST "https://ohana-api-demo.herokuapp.com/api/organizations/1/lo
 }
 ```
 
-This endpoint creates a new location.
+This endpoint creates a new location for the specified organization.
 
 ### HTTP Request
 
-`POST https://ohana-api-demo.herokuapp.com/api/organizations/1/locations`
+`POST https://ohana-api-demo.herokuapp.com/api/organizations/:organization_id/locations`
 
-### URL Parameters
+### JSON Parameters
 
-Parameter | Description | Type | Required?
+| Name | Type | Requirement | Details |
 --------- | ----------- | ---- | ---------
-organization_id | The ID of the organization for which to create a location | Integer | Yes
-description | The location's description | String | Yes
-accessibility | The types of accessibility amenities available at the location | Array of Strings | No
-admin_emails | The emails that are allowed to update the location | Array of Strings | No
-emails | List of emails used to contact the location | Array of Strings | No
-hours | The location's business hours | String | No
-languages | The languages spoken at the location | Array of Strings | No
-name | The location's name | String | Yes
-short_desc | The location's short description | String | Depends on the API, but No by default
-transportation | The transportation options closest to the location | String | No
-urls | A list of the location's websites | Array of Strings | No
-address_attributes | If you wish to create a location's address at the same time as the location creation, you can pass in the address attributes in the address_attributes hash | Hash | No
-contacts_attributes | If you wish to create a location's contacts at the same time as the location creation, you can pass in the contacts attributes in the contacts_attributes hash | Hash | No
-faxes_attributes | If you wish to create a location's faxes at the same time as the location creation, you can pass in the faxes attributes in the faxes_attributes hash | Hash | No
-mail_address_attributes | If you wish to create a location's mailing address at the same time as the location creation, you can pass in the mail address attributes in the mail_address_attributes hash | Hash | No
-phones_attributes | If you wish to create a location's phones at the same time as the location creation, you can pass in the phones attributes in the phones_attributes hash | Hash | No
+| accessibility | array of strings | optional | Accessibility options available at the location. Accepted values are `cd`, `deaf_interpreter`, `disabled_parking`, `elevator`, `ramp`, `restroom`, `tape_braille`, `tty`, `wheelchair`, and `wheelchair_van`. |
+| address_attributes | object | required unless the location is marked as virtual | Physical address of location. See the [Address](#address) section for the columns in that table. |
+| admin_emails | array of strings | optional | Email address for a person allowed to administer the location (via the Ohana API Admin interface for example). |
+| alternate_name | String | optional | Another name this location might be known by. |
+| contacts_attributes | array of objects | optional | Points of contact at the location. See the [Contacts](#contacts) section for the columns in that table. |
+| latitude | float | optional | Latitude portion of the location's coordinates. Note that the app automatically geocodes addresses if the data doesn't include coordinates |
+| longitude | float | optional | Longitude portion of the location's coordinates. Note that the app automatically geocodes addresses if the data doesn't include coordinates |
+| description | string | required | Description of services provided at the location |
+| emails | array of strings | optional | General Email addresses for location. Emails that belong to contacts should go in the Contact object. |
+| hours | string | optional | Hours of operation for the location |
+| languages | array of strings | optional | Languages spoken at the location |
+| mail_address_attributes | object | optional | Mailing address of location.  See the [Mail Address](#mail-address) section for the columns in that table. |
+| name | string | required | Name of the location |
+| phones_attributes | array of objects | optional | Phone numbers for the location. See the [Phones](#phones) section for the columns in that table. |
+| short_desc | string | optional | Succinct description of services provided at the location. |
+| transportation | string | optional | Public transportation options near the location |
+| urls | array of strings | optional | The location's website URLs. Must include "http://" or "https://" |
+| virtual | boolean | required if the location does not have a physical address | Whether or not the location has a physical address. If `false`, it must have an address associated with it. The default value is `false`. |
 
 
 <aside class="warning">All POST requests require a valid token passed via the

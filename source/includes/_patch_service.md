@@ -2,12 +2,11 @@
 
 ```ruby
 # Update service with id 1 for location with id 1
-Ohanakapa.patch('locations/1/service/1', { name: 'Updated Service' })
+Ohanakapa.patch('locations/1/services/1', { name: 'Updated Service' })
 ```
 
 ```shell
-curl --request PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1/service/1?name=Updated Service" \
-  -H "X-Api-Token: your_secret_token"
+curl -X PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1/services/1" -d '{"name":"Updated Service"}' -H "X-Api-Token: test" -H "Content-Type: application/json"
 ```
 
 > When successful, the above command returns a `200` HTTP status code and JSON
@@ -40,20 +39,29 @@ curl --request PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1/servi
 }
 ```
 
-This endpoint updates an existing service.
+This endpoint updates an existing service for the specified location.
 
 ### HTTP Request
 
-`PATCH https://ohana-api-demo.herokuapp.com/api/locations/:location_id/service/:service_id`
+`PATCH https://ohana-api-demo.herokuapp.com/api/locations/:location_id/services/:service_id`
 
-### URL Parameters
+### JSON Parameters
 
-Parameter | Description | Type | Required?
---------- | ----------- | ---- | ---------
-street | The street | String | Yes
-city | The city | String | Yes
-state | The state | String | Yes
-zip | The 5-digit ZIP code | String | Yes
+| Name | Type | Requirement | Detail |
+|:-----|:-----|:---------|:-------|
+| audience | string | optional | Group of people served |
+| categories | array of objects | optional | Categories assigned to the service based on the Open Eligibility taxonomy. See the [Categories](#categories) section for more details. |
+| description | string | optional | Description of the service provided |
+| eligibility | string | optional | Requirements to receive the service |
+| fees | string | optional | Fees charged to receive the service |
+| funding_sources | array of strings | optional | Source of funds used to support the service |
+| keywords | array of strings | optional | Keywords that define this service for search purposes |
+| how_to_apply | string | optional | Description of how to apply to receive the service |
+| name | string | optional | Name of the service |
+| service_areas | array of strings | optional | Cities and Counties served. The values will typically be validated against a list of service areas defined in a deployment's [settings.yml](https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L132-152). |
+| short_desc | string | optional | Succinct description of the service provided. 200 characters maximum. |
+| urls | array of strings | optional | The service's website URLs. Must include "http://" or "https://"
+| wait | string | optional | Wait times associated with the service |
 
 <aside class="warning">All PATCH requests require a valid token passed via the
 `X-Api-Token` HTTP header</aside>

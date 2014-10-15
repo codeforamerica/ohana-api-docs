@@ -12,8 +12,7 @@ Ohanakapa.update_location(1, { name: 'New Name' })
 
 ```shell
 # With shell, you can just pass the X-Api-Token header with each POST, PATCH, or DELETE request
-curl --request PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1?name=Foo" \
-  -H "X-Api-Token: your_secret_token"
+curl --request PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1?name=Foo" -H "X-Api-Token: your_secret_token"
 ```
 
 Note that the [Ohana API Rails application](https://github.com/codeforamerica/ohana-api)

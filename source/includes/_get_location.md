@@ -24,6 +24,7 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1"
   "id": 14,
   "accessibility": [ ],
   "admin_emails": [ ],
+  "alternate_name": null,
   "coordinates": [
     -122.2586432,
     37.5304228
@@ -45,30 +46,30 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1"
   "url": "https://ohana-api-demo.herokuapp.com/api/locations/redwood-shores-branch",
   "address": {
     "id": 14,
-    "street": "399 Marine Parkway.",
+    "street_1": "399 Marine Parkway",
+    "street_2": null,
     "city": "Redwood City",
     "state": "CA",
-    "zip": "94065"
+    "postal_code": "94065"
   },
   "contacts": [
     {
+      "department": null,
       "email": null,
-      "extension": null,
-      "fax": null,
       "id": 22,
       "name": "Dave Genesy",
-      "phone": null,
-      "title": "Library Director"
+      "title": "Library Director",
+      "phones": []
     }
   ],
-  "faxes": [ ],
   "mail_address": {
     "id": 14,
     "attention": "Redwood Shores Branch",
-    "street": "399 Marine Parkway",
+    "street_1": "399 Marine Parkway",
+    "street_2": null,
     "city": "Redwood City",
     "state": "CA",
-    "zip": "94065"
+    "postal_code": "94065"
   },
   "phones": [
     {
@@ -76,7 +77,7 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1"
       "department": null,
       "extension": null,
       "number": "650 780-5740",
-      "number_type": null,
+      "number_type": "voice",
       "vanity_number": null
     }
   ],
@@ -110,9 +111,13 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1"
   ],
   "organization": {
     "id": 4,
+    "alternate_name": null,
+    "date_incorporated": null,
+    "description": "Redwood City Public Library",
+    "email": null,
     "name": "Redwood City Public Library",
     "slug": "redwood-city-public-library",
-    "urls": [ ],
+    "website": null,
     "url": "https://ohana-api-demo.herokuapp.com/api/organizations/redwood-city-public-library",
     "locations_url": "https://ohana-api-demo.herokuapp.com/api/organizations/redwood-city-public-library/locations"
   }
@@ -123,10 +128,14 @@ This endpoint retrieves a specific location.
 
 ### HTTP Request
 
+`GET https://ohana-api-demo.herokuapp.com/api/locations/1`
+
+or
+
 `GET https://ohana-api-demo.herokuapp.com/api/locations/redwood-shores-branch`
 
 ### URL Parameters
 
 Parameter | Description
 --------- | -----------
-id | The ID of the location to retrieve
+id | The ID or slug of the location to retrieve

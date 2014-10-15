@@ -6,8 +6,7 @@ Ohanakapa.update_location(1, { name: 'Updated Name' })
 ```
 
 ```shell
-curl --request PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1?name=Updated Name" \
-  -H "X-Api-Token: your_secret_token"
+curl -X PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1" -d '{"name":"Updated name"}' -H "X-Api-Token: test" -H "Content-Type: application/json"
 ```
 
 > When successful, the above command returns a `200` HTTP status code and JSON
@@ -18,6 +17,7 @@ curl --request PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1?name=
   "id": 14,
   "accessibility": [ ],
   "admin_emails": [ ],
+  "alternate_name": null,
   "coordinates": [
     -122.2586432,
     37.5304228
@@ -39,30 +39,30 @@ curl --request PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1?name=
   "url": "https://ohana-api-demo.herokuapp.com/api/locations/redwood-shores-branch",
   "address": {
     "id": 14,
-    "street": "399 Marine Parkway.",
+    "street_1": "399 Marine Parkway",
+    "street_2": null,
     "city": "Redwood City",
     "state": "CA",
-    "zip": "94065"
+    "postal_code": "94065"
   },
   "contacts": [
     {
       "email": null,
-      "extension": null,
-      "fax": null,
       "id": 22,
       "name": "Dave Genesy",
-      "phone": null,
-      "title": "Library Director"
+      "phones": [],
+      "title": "Library Director",
+      "department": null
     }
   ],
-  "faxes": [ ],
   "mail_address": {
     "id": 14,
     "attention": "Redwood Shores Branch",
-    "street": "399 Marine Parkway",
+    "street_1": "399 Marine Parkway",
+    "street_2": null,
     "city": "Redwood City",
     "state": "CA",
-    "zip": "94065"
+    "postal_code": "94065"
   },
   "phones": [
     {
@@ -70,7 +70,7 @@ curl --request PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1?name=
       "department": null,
       "extension": null,
       "number": "650 780-5740",
-      "number_type": null,
+      "number_type": "voice",
       "vanity_number": null
     }
   ],
@@ -103,12 +103,16 @@ curl --request PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1?name=
     }
   ],
   "organization": {
-    "id": 4,
-    "name": "Redwood City Public Library",
-    "slug": "redwood-city-public-library",
-    "urls": [ ],
-    "url": "https://ohana-api-demo.herokuapp.com/api/organizations/redwood-city-public-library",
-    "locations_url": "https://ohana-api-demo.herokuapp.com/api/organizations/redwood-city-public-library/locations"
+    "id": 8,
+      "alternate_name": null,
+      "date_incorporated": null,
+      "description": "Test description",
+      "email": null,
+      "name": "Admin Test Org",
+      "slug": "admin-test-org",
+      "website": null,
+      "url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org",
+      "locations_url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"
   }
 }
 ```
@@ -119,20 +123,24 @@ This endpoint updates an existing location.
 
 `PATCH https://ohana-api-demo.herokuapp.com/api/locations/1`
 
-### URL Parameters
+### JSON Parameters
 
-Parameter | Description | Type | Required?
---------- | ----------- | ---- | ---------
-accessibility | The types of accessibility amenities available at the location | Array of Strings | No
-admin_emails | The emails that are allowed to update the location | Array of Strings | No
-description | The location's description | String | Yes
-emails | List of emails used to contact the location | Array of Strings | No
-hours | The location's business hours | String | No
-languages | The languages spoken at the location | Array of Strings | No
-name | The location's name | String | Yes
-short_desc | The location's short description | String | Depends on the API, but No by default
-transportation | The transportation options closest to the location | String | No
-urls | A list of the location's websites | Array of Strings | No
+| Name | Type | Requirement | Details |
+|:-----|:-----|:---------|:-------|
+| accessibility | array of strings | optional | Accessibility options available at the location. Accepted values are `cd`, `deaf_interpreter`, `disabled_parking`, `elevator`, `ramp`, `restroom`, `tape_braille`, `tty`, `wheelchair`, and `wheelchair_van`. |
+| admin_emails | array of strings | optional | Email address for a person allowed to administer the location (via the Ohana API Admin interface for example). |
+| alternate_name | String | optional | Another name this location might be known by. |
+| latitude | float | optional | Latitude portion of the location's coordinates. Note that the app automatically geocodes addresses if the data doesn't include coordinates |
+| longitude | float | optional | Longitude portion of the location's coordinates. Note that the app automatically geocodes addresses if the data doesn't include coordinates |
+| description | string | required | Description of services provided at the location |
+| emails | array of strings | optional | General Email addresses for location. Emails that belong to contacts should go in the Contact object. |
+| hours | string | optional | Hours of operation for the location |
+| languages | array of strings | optional | Languages spoken at the location |
+| name | string | required | Name of the location |
+| short_desc | string | optional | Succinct description of services provided at the location. |
+| transportation | string | optional | Public transportation options near the location |
+| urls | array of strings | optional | The location's website URLs. Must include "http://" or "https://" |
+| virtual | boolean | required if the location does not have a physical address | Whether or not the location has a physical address. If `false`, it must have an address associated with it. The default value is `false`. |
 
 <aside class="warning">All PATCH requests require a valid token passed via the
 `X-Api-Token` HTTP header</aside>

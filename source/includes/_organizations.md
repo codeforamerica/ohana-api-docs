@@ -13,8 +13,7 @@ Ohanakapa.organizations
 ```
 
 ```shell
-curl "https://ohana-api-demo.herokuapp.com/api/organizations" \
-  -H "User-Agent: MyClient/1.0.0"
+curl "https://ohana-api-demo.herokuapp.com/api/organizations" -H "User-Agent: MyClient/1.0.0"
 ```
 
 > The above command returns JSON structured like this:
@@ -22,20 +21,28 @@ curl "https://ohana-api-demo.herokuapp.com/api/organizations" \
 ```json
 [
   {
-    "id": 1365,
-    "name": "South San Francisco Farmers Market",
-    "slug": "south-san-francisco-farmers-market",
-    "urls": [ ],
-    "url": "http://ohana-api-demo.herokuapp.com/api/organizations/south-san-francisco-farmers-market",
-    "locations_url": "http://ohana-api-demo.herokuapp.com/api/organizations/south-san-francisco-farmers-market/locations"
+    "id": 7,
+    "alternate_name": null,
+    "date_incorporated": null,
+    "description": "An organization created for testing purposes.",
+    "email": null,
+    "name": "Admin Test Org",
+    "slug": "admin-test-org",
+    "website": null,
+    "url": "http://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org",
+    "locations_url": "http://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"
   },
   {
-    "id": 1364,
-    "name": "Saratoga Farmers' Market",
-    "slug": "saratoga-farmers-market",
-    "urls": [ ],
-    "url": "http://ohana-api-demo.herokuapp.com/api/organizations/saratoga-farmers-market",
-    "locations_url": "http://ohana-api-demo.herokuapp.com/api/organizations/saratoga-farmers-market/locations"
+    "id": 6,
+    "alternate_name": null,
+    "date_incorporated": null,
+    "description": "An organization created for testing purposes.",
+    "email": null,
+    "name": "Fake Org",
+    "slug": "fake-org",
+    "website": null,
+    "url": "http://ohana-api-demo.herokuapp.com/api/organizations/fake-org",
+    "locations_url": "http://ohana-api-demo.herokuapp.com/api/organizations/fake-org/locations"
   }
 ]
 ```
@@ -51,7 +58,7 @@ To access an API that serves a particular region, you would need to look up
 the appropriate endpoint. All known API deployments are listed in the
 [deployments](#live-deployments-of-ohana-api) section at the top of this page.
 
-### Query Parameters
+### URL Query Parameters
 
 Parameter | Default | Description
 --------- | ------- | -----------

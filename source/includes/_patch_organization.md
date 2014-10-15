@@ -6,8 +6,7 @@ Ohanakapa.patch('organizations/1', query: { name: 'Updated Name' })
 ```
 
 ```shell
-curl --request PATCH "https://ohana-api-demo.herokuapp.com/api/organizations/1?name=Updated Name" \
-  -H "X-Api-Token: your_secret_token"
+curl -X PATCH "https://ohana-api-demo.herokuapp.com/api/organizations/1/address/1" -d '{"name":"Updated Name"}' -H "X-Api-Token: test" -H "Content-Type: application/json"
 ```
 
 > When successful, the above command returns a `200` HTTP status code and JSON
@@ -16,11 +15,15 @@ curl --request PATCH "https://ohana-api-demo.herokuapp.com/api/organizations/1?n
 ```json
 {
   "id": 1,
+  "alternate_name": null,
+  "date_incorporated": null,
+  "description": "Test description",
+  "email": null,
   "name": "Updated Name",
   "slug": "updated-name",
-  "urls": [],
-  "url": "http://ohana-api-demo.herokuapp.com/api/organizations/updated-name",
-  "locations_url": "http://ohana-api-demo.herokuapp.com/api/organizations/updated-name/locations"
+  "website": null,
+  "url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org",
+  "locations_url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"
 }
 ```
 
@@ -30,12 +33,19 @@ This endpoint updates an existing organization.
 
 `PATCH https://ohana-api-demo.herokuapp.com/api/organizations/1`
 
-### URL Parameters
+### JSON Parameters
 
-Parameter | Description | Type | Required?
---------- | ----------- | ---- | ---------
-name | The organization's name | String | Yes
-urls | A list of the organization's websites | Array of Strings | No
+| Name | Type | Requirement | Details |
+|:-----|:-----|:---------|:-------|
+| alternate_name | String | optional | Another name this organization might be known by. |
+| date_incorporated | Date | optional | The date this organization was incorporated. |
+| description | String | required | A description of what the organization does. |
+| email | String | optional | The organization's primary email. |
+| legal_status | String | optional | The conditions an organization is operating under; e.g. non-profit, private corporation or a government organization. |
+| name | String | required | Name of the organization |
+| tax_id | String | optional | Tax identifier, such as Federal Employer Identification Number. |
+| tax_status | String | optional | Internal Revenue Service tax designation, such as `501(c)(3)` for tax-exempt organizations. |
+| website | String | optional | The organization's website |
 
 <aside class="warning">All PATCH requests require a valid token passed via the
 `X-Api-Token` HTTP header</aside>

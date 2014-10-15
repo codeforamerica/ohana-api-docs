@@ -9,8 +9,13 @@ toc_footers:
   - <a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
 includes:
+  - version
+  - schema
   - requests
+  - parameters
   - authentication
+  - cors
+  - root
   - locations
   - get_location
   - create_location
@@ -19,10 +24,6 @@ includes:
   - create_address
   - patch_address
   - delete_address
-  - get_location_faxes
-  - create_fax
-  - patch_fax
-  - delete_fax
   - organizations
   - get_organization
   - post_organization
@@ -44,7 +45,7 @@ Welcome to the Ohana API documentation. The [Ohana API Rails app](https://github
 
 We provide code examples for the Shell and Ruby in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
 
-# Apps That Use Ohana API
+# Apps Powered by Ohana API
 
 [Ohana Web Search](https://github.com/codeforamerica/ohana-web-search) is an open source Rails application that allows you to search for and display information provided by the API in a user-friendly website.
 

@@ -2,8 +2,7 @@
 
 ```shell
 # In your shell, you can just pass the correct header with each request
-curl "https://ohana-api-demo.herokuapp.com/api" \
-  -H "User-Agent: MyClient/1.0.0"
+curl "https://ohana-api-demo.herokuapp.com/api" -H "User-Agent: MyClient/1.0.0"
 ```
 
 ```ruby
@@ -23,3 +22,7 @@ If you are using your own client to communicate with Ohana API, please keep the 
 - Always set the **Accept** header to `application/vnd.ohanapi+json; version=1`
 
 Note that our [Ruby library](https://github.com/codeforamerica/ohanakapa-ruby) already does this for you.
+
+## Conditional Requests
+
+Most responses return an `Etag` header. Many responses also return a `Last-Modified` header. You can use the values of these headers to make subsequent requests to those resources using the `If-None-Match` and `If-Modified-Since` headers, respectively. If the resource has not changed, the server will return a `304 Not Modified`.
