@@ -48,7 +48,7 @@
 <p>Welcome to the Ohana API documentation. The <a href="https://github.com/codeforamerica/ohana-api">Ohana API Rails app</a> allows any community to deploy their own instance of the API, and to maintain their own resource directory of human service providers.</p>
 
 <p>We provide code examples for the Shell and Ruby in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.</p>
-<h1 id='apps-that-use-ohana-api'>Apps That Use Ohana API</h1>
+<h1 id='apps-powered-by-ohana-api'>Apps Powered by Ohana API</h1>
 <p><a href="https://github.com/codeforamerica/ohana-web-search">Ohana Web Search</a> is an open source Rails application that allows you to search for and display information provided by the API in a user-friendly website.</p>
 <h1 id='live-deployments-of-ohana-api'>Live Deployments of Ohana API</h1>
 <p>Currently, there is only one live deployment: in San Mateo County, California. We expect more cities and counties to deploy, and as they do, we will add them to this list. If you have deployed an instance of Ohana API, feel free to add it to this list via a pull request, since this documentation is open source.</p>
@@ -62,9 +62,25 @@
 <li>Developer Portal: <a href="http://developer.smc-connect.org">http://developer.smc-connect.org</a></li>
 </ul>
 
+          <h1 id='current-version'>Current Version</h1>
+<p>By default, all requests receive <strong>version 1</strong> of the API. We encourage you to explicitly request this version via the <code class="prettyprint">Accept</code> HTTP header. If you are using our <a href="https://github.com/codeforamerica/ohanakapa-ruby">Ruby library</a>, this is automatically done for you.</p>
+<pre class="highlight plaintext">Accept: application/vnd.ohanapi+json; version=1
+</pre>
+
+          <h1 id='schema'>Schema</h1>
+<p>All data is sent and received as JSON. Blank fields are included as <code class="prettyprint">null</code> instead of being omitted, and all timestamps are returned in ISO 8601 format:
+<code class="prettyprint">YYYY-MM-DDTHH:MM:SSZ</code>.</p>
+<h2 id='summary-representations'>Summary Representations</h2>
+<p>When you fetch a list of locations (via either the <code class="prettyprint">locations</code> or the <code class="prettyprint">search</code> endpoint), the response includes a subset of the attributes for that location. This is the “summary” representation of the resource. Some attributes are computationally expensive for the API to provide. For performance reasons, the summary representation excludes those attributes. To obtain those attributes, fetch the “detailed” representation.</p>
+
+<p>The attributes that are excluded are <code class="prettyprint">contacts</code> and <code class="prettyprint">services</code>. Instead, the URLs to those attributes are provided as <code class="prettyprint">contacts_url</code> and <code class="prettyprint">services_url</code>.</p>
+
+<p>The attributes provided in the summary representation are defined in the <a href="https://github.com/codeforamerica/ohana-api/blob/master/app/serializers/locations_serializer.rb">Locations Serializer</a>.</p>
+<h2 id='detailed-representations'>Detailed Representations</h2>
+<p>When you fetch an individual resource, the response typically includes all attributes for that resource. This is the “detailed” representation of the resource.</p>
+
           <h1 id='making-requests'>Making Requests</h1><pre class="highlight shell"><span class="c"># In your shell, you can just pass the correct header with each request</span>
-curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api"</span> <span class="se">\</span>
-  -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
+curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api"</span> -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
 </pre>
 <pre class="highlight ruby"><span class="c1"># Provide an API Endpoint</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
@@ -83,6 +99,17 @@ curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api"</span> <span cl
 </ul>
 
 <p>Note that our <a href="https://github.com/codeforamerica/ohanakapa-ruby">Ruby library</a> already does this for you.</p>
+<h2 id='conditional-requests'>Conditional Requests</h2>
+<p>Most responses return an <code class="prettyprint">Etag</code> header. Many responses also return a <code class="prettyprint">Last-Modified</code> header. You can use the values of these headers to make subsequent requests to those resources using the <code class="prettyprint">If-None-Match</code> and <code class="prettyprint">If-Modified-Since</code> headers, respectively. If the resource has not changed, the server will return a <code class="prettyprint">304 Not Modified</code>.</p>
+
+          <h1 id='parameters'>Parameters</h1>
+<p>Many API methods take optional parameters. For GET requests to the <code class="prettyprint">search</code> endpoint, parameters can be passed as an HTTP query string parameter:</p>
+
+<p><code class="prettyprint">$ curl -i &quot;https://ohana-api-demo.herokuapp.com/api/search?keyword=food&quot;</code></p>
+
+<p>For POST, PATCH, and PUT requests, parameters not included in the URL should be encoded as JSON with a Content-Type of <code class="prettyprint">application/json</code>:</p>
+
+<p><code class="prettyprint">$ curl -X PATCH &quot;https://ohana-api-demo.herokuapp.com/api/locations/1/address/1&quot; -d &#39;{&quot;street_1&quot;:&quot;New street&quot;,&quot;city&quot;:&quot;Albequerque&quot;,&quot;state&quot;:&quot;NM&quot;,&quot;postal_code&quot;:&quot;12345&quot;,&quot;country_code&quot;:&quot;US&quot;}&#39; -H &quot;X-Api-Token: test&quot; -H &quot;Content-Type: application/json&quot;</code></p>
 
           <h1 id='authentication'>Authentication</h1><pre class="highlight ruby"><span class="c1"># Provide an API Token</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
@@ -93,8 +120,7 @@ curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api"</span> <span cl
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">update_location</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">'New Name'</span> <span class="p">})</span>
 </pre>
 <pre class="highlight shell"><span class="c"># With shell, you can just pass the X-Api-Token header with each POST, PATCH, or DELETE request</span>
-curl --request PATCH <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1?name=Foo"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
+curl --request PATCH <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1?name=Foo"</span> -H <span class="s2">"X-Api-Token: your_secret_token"</span>
 </pre>
 
 <p>Note that the <a href="https://github.com/codeforamerica/ohana-api">Ohana API Rails application</a>
@@ -121,6 +147,97 @@ at the same time. Most communities will just use the built-in admin interface,
 so if a community is already actively using the built-in admin interface, they
 most likely will not grant write access to an external application.</p>
 
+          <h1 id='cross-origin-resource-sharing'>Cross Origin Resource Sharing</h1><pre class="highlight shell"><span class="c"># A sample request sent from a browser hitting http://example.com:</span>
+<span class="gp">$ </span>curl -i https://ohana-api-demo.herokuapp.com/api/locations -H <span class="s2">"Origin: http://example.com"</span>
+
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: http://example.com
+Access-Control-Allow-Methods: GET, PUT, PATCH, POST, DELETE
+Access-Control-Expose-Headers: Etag, Last-Modified, Link, X-Total-Count
+Access-Control-Max-Age: 1728000
+Access-Control-Allow-Credentials: <span class="nb">true</span>
+</pre>
+<pre class="highlight shell"><span class="c"># A valid CORS preflight request must include the `Access-Control-Request-Method` header</span>
+<span class="gp">$ </span>curl -i https://ohana-api-demo.herokuapp.com/api/locations -H <span class="s2">"Origin: http://example.com"</span> -H <span class="s2">"Access-Control-Request-Method: GET"</span> -X OPTIONS
+
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: http://example.com
+Access-Control-Allow-Methods: GET, PUT, PATCH, POST, DELETE
+Access-Control-Expose-Headers: Etag, Last-Modified, Link, X-Total-Count
+Access-Control-Max-Age: 1728000
+Access-Control-Allow-Credentials: <span class="nb">true</span>
+</pre>
+<pre class="highlight shell"><span class="c"># A valid CORS preflight request can also include the `Allow-Control-Request-Headers` header:</span>
+<span class="gp">$ </span>curl -i https://ohana-api-demo.herokuapp.com/api/locations -H <span class="s2">"Origin: http://example.com"</span> -H <span class="s2">"Access-Control-Request-Method: GET"</span> -H <span class="s2">"Access-Control-Request-Headers: If-None-Match"</span> -X OPTIONS
+
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: http://example.com
+Access-Control-Allow-Methods: GET, PUT, PATCH, POST, DELETE
+Access-Control-Expose-Headers: Etag, Last-Modified, Link, X-Total-Count
+Access-Control-Max-Age: 1728000
+Access-Control-Allow-Credentials: <span class="nb">true
+</span>Access-Control-Allow-Headers: If-None-Match
+</pre>
+
+<p>The API supports Cross Origin Resource Sharing (CORS) for AJAX requests. You can read the <a href="http://www.w3.org/TR/cors">CORS W3C working draft</a> for more details.</p>
+
+<p>The API supports the following endpoints for CORS requests:</p>
+
+<ul>
+<li>/organizations</li>
+<li>/locations</li>
+<li>/search</li>
+</ul>
+
+<p>The following methods are allowed:</p>
+
+<ul>
+<li>GET, PUT, PATCH, POST, DELETE</li>
+</ul>
+
+<p>The following additional headers are exposed:</p>
+
+<ul>
+<li>Etag</li>
+<li>Last-Modified</li>
+<li>Link</li>
+<li>X-Total-Count</li>
+</ul>
+
+<p>View sample requests and responses on the right in the Shell tab.</p>
+
+<p>View the <a href="https://github.com/codeforamerica/ohana-api/blob/master/config/application.rb#L43-52">source code</a>.</p>
+
+          <h1 id='root-endpoint'>Root Endpoint</h1>
+<p>Sending a <code class="prettyprint">GET</code> request to the root endpoint will return all endpoint categories that the API supports.</p>
+
+<p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api</code></p>
+
+<blockquote>
+<p>The root endpoint returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><span class="p">{</span><span class="w">
+  </span><span class="s2">"organizations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations{/organization_id}"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations{/location_id}"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"location_search_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/search{?category,keyword,language,lat_lng,location,radius,org_name}"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre>
+
+<p>All URLs are expected to be proper <a href="http://tools.ietf.org/html/rfc6570">RFC 6570</a> URI templates.</p>
+
+<p>You can then expand these templates using something like the <a href="https://github.com/hannesg/uri_template">uri_template</a> Ruby gem. See example code in the Ruby tab on the right.</p>
+<pre class="highlight ruby"><span class="c1"># Example usage of the uri_template gem</span>
+<span class="o">&gt;&gt;</span> <span class="n">tmpl</span> <span class="o">=</span> <span class="no">URITemplate</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'/search{?keyword,location,language}'</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span> <span class="n">tmpl</span><span class="p">.</span><span class="nf">expand</span>
+<span class="o">=&gt;</span> <span class="s2">"/search"</span>
+
+<span class="o">&gt;&gt;</span> <span class="n">tmpl</span><span class="p">.</span><span class="nf">expand</span> <span class="ss">keyword: </span><span class="s1">'food'</span>
+<span class="o">=&gt;</span> <span class="s2">"/search?keyword=food"</span>
+
+<span class="o">&gt;&gt;</span> <span class="n">tmpl</span><span class="p">.</span><span class="nf">expand</span> <span class="ss">keyword: </span><span class="s1">'food'</span><span class="p">,</span> <span class="ss">location: </span><span class="s1">'94403'</span>
+<span class="o">=&gt;</span> <span class="s2">"/search?keyword=food&amp;location=94403"</span>
+</pre>
+
           <h1 id='locations'>Locations</h1><h2 id='get-all-locations'>Get all locations</h2><pre class="highlight ruby"><span class="c1"># Provide an API Endpoint</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
   <span class="n">c</span><span class="p">.</span><span class="nf">api_endpoint</span> <span class="o">=</span> <span class="s1">'https://ohana-api-demo.herokuapp.com/api'</span>
@@ -129,8 +246,7 @@ most likely will not grant write access to an external application.</p>
 <span class="c1"># Fetch all locations</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">locations</span>
 </pre>
-<pre class="highlight shell">curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations"</span> <span class="se">\</span>
-  -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
+<pre class="highlight shell">curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations"</span> -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
 </pre>
 
 <blockquote>
@@ -153,21 +269,25 @@ most likely will not grant write access to an external application.</p>
     </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-09-10T08:21:14.853-07:00"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
     </span><span class="s2">"contacts_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/contacts"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"faxes_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/faxes"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"services_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/services"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">28</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"street"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1290 Ridder Park Drive"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"street_1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1290 Ridder Park Drive"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"street_2"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"San Francisco"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94103"</span><span class="w">
+      </span><span class="s2">"postal_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94103"</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"organization"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test description"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Admin Test Org"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"admin-test-org"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"</span><span class="w">
     </span><span class="p">},</span><span class="w">
@@ -194,16 +314,21 @@ most likely will not grant write access to an external application.</p>
     </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">27</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"street"</span><span class="p">:</span><span class="w"> </span><span class="s2">"155 9th St"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"street_1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"155 9th St"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"street_2"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"San Francisco"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94103"</span><span class="w">
+      </span><span class="s2">"postal_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94103"</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"organization"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test description"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Admin Test Org"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"admin-test-org"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"</span><span class="w">
     </span><span class="p">},</span><span class="w">
@@ -220,7 +345,7 @@ most likely will not grant write access to an external application.</p>
 To access an API that serves a particular region, you would need to look up
 the appropriate endpoint. All known API deployments are listed in the
 <a href="#live-deployments-of-ohana-api">deployments</a> section at the top of this page.</p>
-<h3 id='query-parameters'>Query Parameters</h3>
+<h3 id='url-query-parameters'>URL Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -261,6 +386,7 @@ structured like this:</p>
   </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
   </span><span class="s2">"accessibility"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
   </span><span class="s2">"admin_emails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+  </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
   </span><span class="s2">"coordinates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="mf">-122.2586432</span><span class="p">,</span><span class="w">
     </span><span class="mf">37.5304228</span><span class="w">
@@ -282,30 +408,30 @@ structured like this:</p>
   </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/redwood-shores-branch"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"street"</span><span class="p">:</span><span class="w"> </span><span class="s2">"399 Marine Parkway."</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"street_1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"399 Marine Parkway"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"street_2"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Redwood City"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94065"</span><span class="w">
+    </span><span class="s2">"postal_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94065"</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"department"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"extension"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"fax"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">22</span><span class="p">,</span><span class="w">
       </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Dave Genesy"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"phone"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Library Director"</span><span class="w">
+      </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Library Director"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">],</span><span class="w">
-  </span><span class="s2">"faxes"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
   </span><span class="s2">"mail_address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
     </span><span class="s2">"attention"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Redwood Shores Branch"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"street"</span><span class="p">:</span><span class="w"> </span><span class="s2">"399 Marine Parkway"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"street_1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"399 Marine Parkway"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"street_2"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Redwood City"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94065"</span><span class="w">
+    </span><span class="s2">"postal_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94065"</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
@@ -313,7 +439,7 @@ structured like this:</p>
       </span><span class="s2">"department"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"extension"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"number"</span><span class="p">:</span><span class="w"> </span><span class="s2">"650 780-5740"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"number_type"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"number_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"voice"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"vanity_number"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">],</span><span class="w">
@@ -347,9 +473,13 @@ structured like this:</p>
   </span><span class="p">],</span><span class="w">
   </span><span class="s2">"organization"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Redwood City Public Library"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Redwood City Public Library"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"redwood-city-public-library"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/redwood-city-public-library"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/redwood-city-public-library/locations"</span><span class="w">
   </span><span class="p">}</span><span class="w">
@@ -358,6 +488,10 @@ structured like this:</p>
 
 <p>This endpoint retrieves a specific location.</p>
 <h3 id='http-request'>HTTP Request</h3>
+<p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api/locations/1</code></p>
+
+<p>or</p>
+
 <p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api/locations/redwood-shores-branch</code></p>
 <h3 id='url-parameters'>URL Parameters</h3>
 <table><thead>
@@ -368,16 +502,15 @@ structured like this:</p>
 </thead><tbody>
 <tr>
 <td>id</td>
-<td>The ID of the location to retrieve</td>
+<td>The ID or slug of the location to retrieve</td>
 </tr>
 </tbody></table>
 
-          <h2 id='create-a-new-location'>Create a new location</h2><pre class="highlight ruby"><span class="c1"># Create a new location</span>
-<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s2">"organizations/</span><span class="si">#{</span><span class="n">organization_id</span><span class="si">}</span><span class="s2">/locations"</span><span class="p">,</span>
-  <span class="ss">query: </span><span class="p">{</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">'New Location'</span> <span class="p">})</span>
+          <h2 id='create-a-new-location'>Create a new location</h2><pre class="highlight ruby"><span class="c1"># Create a new location for organization with id 1</span>
+<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s2">"organizations/1/locations"</span><span class="p">,</span>
+  <span class="ss">query: </span><span class="p">{</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">'New Location'</span><span class="p">,</span> <span class="ss">description: </span><span class="s1">'New description'</span> <span class="p">})</span>
 </pre>
-<pre class="highlight shell">curl --request POST <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/1/locations/?name=New Location"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
+<pre class="highlight shell">curl -X POST <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/1/locations"</span> -d <span class="s1">'{"name":"New Location","description":"New description"}'</span> -H <span class="s2">"X-Api-Token: your_token"</span> -H <span class="s2">"Content-Type: application/json"</span>
 </pre>
 
 <blockquote>
@@ -391,113 +524,125 @@ structured like this:</p>
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
-<p>This endpoint creates a new location.</p>
+<p>This endpoint creates a new location for the specified organization.</p>
 <h3 id='http-request'>HTTP Request</h3>
-<p><code class="prettyprint">POST https://ohana-api-demo.herokuapp.com/api/organizations/1/locations</code></p>
-<h3 id='url-parameters'>URL Parameters</h3>
+<p><code class="prettyprint">POST https://ohana-api-demo.herokuapp.com/api/organizations/:organization_id/locations</code></p>
+<h3 id='json-parameters'>JSON Parameters</h3>
 <table><thead>
 <tr>
-<th>Parameter</th>
-<th>Description</th>
+<th>Name</th>
 <th>Type</th>
-<th>Required?</th>
+<th>Requirement</th>
+<th>Details</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>organization_id</td>
-<td>The ID of the organization for which to create a location</td>
-<td>Integer</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>description</td>
-<td>The location&rsquo;s description</td>
-<td>String</td>
-<td>Yes</td>
-</tr>
-<tr>
 <td>accessibility</td>
-<td>The types of accessibility amenities available at the location</td>
-<td>Array of Strings</td>
-<td>No</td>
-</tr>
-<tr>
-<td>admin_emails</td>
-<td>The emails that are allowed to update the location</td>
-<td>Array of Strings</td>
-<td>No</td>
-</tr>
-<tr>
-<td>emails</td>
-<td>List of emails used to contact the location</td>
-<td>Array of Strings</td>
-<td>No</td>
-</tr>
-<tr>
-<td>hours</td>
-<td>The location&rsquo;s business hours</td>
-<td>String</td>
-<td>No</td>
-</tr>
-<tr>
-<td>languages</td>
-<td>The languages spoken at the location</td>
-<td>Array of Strings</td>
-<td>No</td>
-</tr>
-<tr>
-<td>name</td>
-<td>The location&rsquo;s name</td>
-<td>String</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>short_desc</td>
-<td>The location&rsquo;s short description</td>
-<td>String</td>
-<td>Depends on the API, but No by default</td>
-</tr>
-<tr>
-<td>transportation</td>
-<td>The transportation options closest to the location</td>
-<td>String</td>
-<td>No</td>
-</tr>
-<tr>
-<td>urls</td>
-<td>A list of the location&rsquo;s websites</td>
-<td>Array of Strings</td>
-<td>No</td>
+<td>array of strings</td>
+<td>optional</td>
+<td>Accessibility options available at the location. Accepted values are <code class="prettyprint">cd</code>, <code class="prettyprint">deaf_interpreter</code>, <code class="prettyprint">disabled_parking</code>, <code class="prettyprint">elevator</code>, <code class="prettyprint">ramp</code>, <code class="prettyprint">restroom</code>, <code class="prettyprint">tape_braille</code>, <code class="prettyprint">tty</code>, <code class="prettyprint">wheelchair</code>, and <code class="prettyprint">wheelchair_van</code>.</td>
 </tr>
 <tr>
 <td>address_attributes</td>
-<td>If you wish to create a location&rsquo;s address at the same time as the location creation, you can pass in the address attributes in the address_attributes hash</td>
-<td>Hash</td>
-<td>No</td>
+<td>object</td>
+<td>required unless the location is marked as virtual</td>
+<td>Physical address of location. See the <a href="#address">Address</a> section for the columns in that table.</td>
+</tr>
+<tr>
+<td>admin_emails</td>
+<td>array of strings</td>
+<td>optional</td>
+<td>Email address for a person allowed to administer the location (via the Ohana API Admin interface for example).</td>
+</tr>
+<tr>
+<td>alternate_name</td>
+<td>String</td>
+<td>optional</td>
+<td>Another name this location might be known by.</td>
 </tr>
 <tr>
 <td>contacts_attributes</td>
-<td>If you wish to create a location&rsquo;s contacts at the same time as the location creation, you can pass in the contacts attributes in the contacts_attributes hash</td>
-<td>Hash</td>
-<td>No</td>
+<td>array of objects</td>
+<td>optional</td>
+<td>Points of contact at the location. See the <a href="#contacts">Contacts</a> section for the columns in that table.</td>
 </tr>
 <tr>
-<td>faxes_attributes</td>
-<td>If you wish to create a location&rsquo;s faxes at the same time as the location creation, you can pass in the faxes attributes in the faxes_attributes hash</td>
-<td>Hash</td>
-<td>No</td>
+<td>latitude</td>
+<td>float</td>
+<td>optional</td>
+<td>Latitude portion of the location&rsquo;s coordinates. Note that the app automatically geocodes addresses if the data doesn&rsquo;t include coordinates</td>
+</tr>
+<tr>
+<td>longitude</td>
+<td>float</td>
+<td>optional</td>
+<td>Longitude portion of the location&rsquo;s coordinates. Note that the app automatically geocodes addresses if the data doesn&rsquo;t include coordinates</td>
+</tr>
+<tr>
+<td>description</td>
+<td>string</td>
+<td>required</td>
+<td>Description of services provided at the location</td>
+</tr>
+<tr>
+<td>emails</td>
+<td>array of strings</td>
+<td>optional</td>
+<td>General Email addresses for location. Emails that belong to contacts should go in the Contact object.</td>
+</tr>
+<tr>
+<td>hours</td>
+<td>string</td>
+<td>optional</td>
+<td>Hours of operation for the location</td>
+</tr>
+<tr>
+<td>languages</td>
+<td>array of strings</td>
+<td>optional</td>
+<td>Languages spoken at the location</td>
 </tr>
 <tr>
 <td>mail_address_attributes</td>
-<td>If you wish to create a location&rsquo;s mailing address at the same time as the location creation, you can pass in the mail address attributes in the mail_address_attributes hash</td>
-<td>Hash</td>
-<td>No</td>
+<td>object</td>
+<td>optional</td>
+<td>Mailing address of location.  See the <a href="#mail-address">Mail Address</a> section for the columns in that table.</td>
+</tr>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>required</td>
+<td>Name of the location</td>
 </tr>
 <tr>
 <td>phones_attributes</td>
-<td>If you wish to create a location&rsquo;s phones at the same time as the location creation, you can pass in the phones attributes in the phones_attributes hash</td>
-<td>Hash</td>
-<td>No</td>
+<td>array of objects</td>
+<td>optional</td>
+<td>Phone numbers for the location. See the <a href="#phones">Phones</a> section for the columns in that table.</td>
+</tr>
+<tr>
+<td>short_desc</td>
+<td>string</td>
+<td>optional</td>
+<td>Succinct description of services provided at the location.</td>
+</tr>
+<tr>
+<td>transportation</td>
+<td>string</td>
+<td>optional</td>
+<td>Public transportation options near the location</td>
+</tr>
+<tr>
+<td>urls</td>
+<td>array of strings</td>
+<td>optional</td>
+<td>The location&rsquo;s website URLs. Must include &ldquo;http://&rdquo; or &ldquo;https://&rdquo;</td>
+</tr>
+<tr>
+<td>virtual</td>
+<td>boolean</td>
+<td>required if the location does not have a physical address</td>
+<td>Whether or not the location has a physical address. If <code class="prettyprint">false</code>, it must have an address associated with it. The default value is <code class="prettyprint">false</code>.</td>
 </tr>
 </tbody></table>
 
@@ -507,8 +652,7 @@ structured like this:</p>
           <h2 id='update-an-existing-location'>Update an existing location</h2><pre class="highlight ruby"><span class="c1"># Update location whose id is 1</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">update_location</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">'Updated Name'</span> <span class="p">})</span>
 </pre>
-<pre class="highlight shell">curl --request PATCH <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1?name=Updated Name"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
+<pre class="highlight shell">curl -X PATCH <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1"</span> -d <span class="s1">'{"name":"Updated name"}'</span> -H <span class="s2">"X-Api-Token: test"</span> -H <span class="s2">"Content-Type: application/json"</span>
 </pre>
 
 <blockquote>
@@ -519,6 +663,7 @@ structured like this:</p>
   </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
   </span><span class="s2">"accessibility"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
   </span><span class="s2">"admin_emails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+  </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
   </span><span class="s2">"coordinates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="mf">-122.2586432</span><span class="p">,</span><span class="w">
     </span><span class="mf">37.5304228</span><span class="w">
@@ -540,30 +685,30 @@ structured like this:</p>
   </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/redwood-shores-branch"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"street"</span><span class="p">:</span><span class="w"> </span><span class="s2">"399 Marine Parkway."</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"street_1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"399 Marine Parkway"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"street_2"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Redwood City"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94065"</span><span class="w">
+    </span><span class="s2">"postal_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94065"</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
       </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"extension"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"fax"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">22</span><span class="p">,</span><span class="w">
       </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Dave Genesy"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"phone"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Library Director"</span><span class="w">
+      </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+      </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Library Director"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"department"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">],</span><span class="w">
-  </span><span class="s2">"faxes"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
   </span><span class="s2">"mail_address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
     </span><span class="s2">"attention"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Redwood Shores Branch"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"street"</span><span class="p">:</span><span class="w"> </span><span class="s2">"399 Marine Parkway"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"street_1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"399 Marine Parkway"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"street_2"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Redwood City"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94065"</span><span class="w">
+    </span><span class="s2">"postal_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94065"</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
@@ -571,7 +716,7 @@ structured like this:</p>
       </span><span class="s2">"department"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"extension"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"number"</span><span class="p">:</span><span class="w"> </span><span class="s2">"650 780-5740"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"number_type"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"number_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"voice"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"vanity_number"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">],</span><span class="w">
@@ -604,12 +749,16 @@ structured like this:</p>
     </span><span class="p">}</span><span class="w">
   </span><span class="p">],</span><span class="w">
   </span><span class="s2">"organization"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Redwood City Public Library"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"redwood-city-public-library"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
-    </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/redwood-city-public-library"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/redwood-city-public-library/locations"</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test description"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Admin Test Org"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"admin-test-org"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></pre>
@@ -617,74 +766,98 @@ structured like this:</p>
 <p>This endpoint updates an existing location.</p>
 <h3 id='http-request'>HTTP Request</h3>
 <p><code class="prettyprint">PATCH https://ohana-api-demo.herokuapp.com/api/locations/1</code></p>
-<h3 id='url-parameters'>URL Parameters</h3>
+<h3 id='json-parameters'>JSON Parameters</h3>
 <table><thead>
 <tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Type</th>
-<th>Required?</th>
+<th style="text-align: left">Name</th>
+<th style="text-align: left">Type</th>
+<th style="text-align: left">Requirement</th>
+<th style="text-align: left">Details</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>accessibility</td>
-<td>The types of accessibility amenities available at the location</td>
-<td>Array of Strings</td>
-<td>No</td>
+<td style="text-align: left">accessibility</td>
+<td style="text-align: left">array of strings</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Accessibility options available at the location. Accepted values are <code class="prettyprint">cd</code>, <code class="prettyprint">deaf_interpreter</code>, <code class="prettyprint">disabled_parking</code>, <code class="prettyprint">elevator</code>, <code class="prettyprint">ramp</code>, <code class="prettyprint">restroom</code>, <code class="prettyprint">tape_braille</code>, <code class="prettyprint">tty</code>, <code class="prettyprint">wheelchair</code>, and <code class="prettyprint">wheelchair_van</code>.</td>
 </tr>
 <tr>
-<td>admin_emails</td>
-<td>The emails that are allowed to update the location</td>
-<td>Array of Strings</td>
-<td>No</td>
+<td style="text-align: left">admin_emails</td>
+<td style="text-align: left">array of strings</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Email address for a person allowed to administer the location (via the Ohana API Admin interface for example).</td>
 </tr>
 <tr>
-<td>description</td>
-<td>The location&rsquo;s description</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">alternate_name</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Another name this location might be known by.</td>
 </tr>
 <tr>
-<td>emails</td>
-<td>List of emails used to contact the location</td>
-<td>Array of Strings</td>
-<td>No</td>
+<td style="text-align: left">latitude</td>
+<td style="text-align: left">float</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Latitude portion of the location&rsquo;s coordinates. Note that the app automatically geocodes addresses if the data doesn&rsquo;t include coordinates</td>
 </tr>
 <tr>
-<td>hours</td>
-<td>The location&rsquo;s business hours</td>
-<td>String</td>
-<td>No</td>
+<td style="text-align: left">longitude</td>
+<td style="text-align: left">float</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Longitude portion of the location&rsquo;s coordinates. Note that the app automatically geocodes addresses if the data doesn&rsquo;t include coordinates</td>
 </tr>
 <tr>
-<td>languages</td>
-<td>The languages spoken at the location</td>
-<td>Array of Strings</td>
-<td>No</td>
+<td style="text-align: left">description</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">Description of services provided at the location</td>
 </tr>
 <tr>
-<td>name</td>
-<td>The location&rsquo;s name</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">emails</td>
+<td style="text-align: left">array of strings</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">General Email addresses for location. Emails that belong to contacts should go in the Contact object.</td>
 </tr>
 <tr>
-<td>short_desc</td>
-<td>The location&rsquo;s short description</td>
-<td>String</td>
-<td>Depends on the API, but No by default</td>
+<td style="text-align: left">hours</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Hours of operation for the location</td>
 </tr>
 <tr>
-<td>transportation</td>
-<td>The transportation options closest to the location</td>
-<td>String</td>
-<td>No</td>
+<td style="text-align: left">languages</td>
+<td style="text-align: left">array of strings</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Languages spoken at the location</td>
 </tr>
 <tr>
-<td>urls</td>
-<td>A list of the location&rsquo;s websites</td>
-<td>Array of Strings</td>
-<td>No</td>
+<td style="text-align: left">name</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">Name of the location</td>
+</tr>
+<tr>
+<td style="text-align: left">short_desc</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Succinct description of services provided at the location.</td>
+</tr>
+<tr>
+<td style="text-align: left">transportation</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Public transportation options near the location</td>
+</tr>
+<tr>
+<td style="text-align: left">urls</td>
+<td style="text-align: left">array of strings</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">The location&rsquo;s website URLs. Must include &ldquo;http://&rdquo; or &ldquo;https://&rdquo;</td>
+</tr>
+<tr>
+<td style="text-align: left">virtual</td>
+<td style="text-align: left">boolean</td>
+<td style="text-align: left">required if the location does not have a physical address</td>
+<td style="text-align: left">Whether or not the location has a physical address. If <code class="prettyprint">false</code>, it must have an address associated with it. The default value is <code class="prettyprint">false</code>.</td>
 </tr>
 </tbody></table>
 
@@ -694,8 +867,7 @@ structured like this:</p>
           <h2 id='delete-an-existing-location'>Delete an existing location</h2><pre class="highlight ruby"><span class="c1"># Delete location with id 1</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="s1">'locations/1'</span><span class="p">)</span>
 </pre>
-<pre class="highlight shell">curl --request DELETE <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
+<pre class="highlight shell">curl --request DELETE <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1"</span> -H <span class="s2">"X-Api-Token: your_secret_token"</span>
 </pre>
 
 <blockquote>
@@ -710,10 +882,9 @@ structured like this:</p>
 <code class="prettyprint">X-Api-Token</code> HTTP header</aside></p>
 
           <h1 id='address'>Address</h1><h2 id='create-a-new-address'>Create a new address</h2><pre class="highlight ruby"><span class="c1"># Create an address for location with id 1</span>
-<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s1">'locations/1/address/'</span><span class="p">,</span> <span class="p">{</span> <span class="ss">street: </span><span class="s1">'New Street'</span><span class="p">,</span> <span class="ss">city: </span><span class="s1">'Albequerque'</span><span class="p">,</span> <span class="ss">state: </span><span class="s1">'NM'</span><span class="p">,</span> <span class="ss">zip: </span><span class="s1">'12345'</span> <span class="p">})</span>
+<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s1">'locations/1/address/'</span><span class="p">,</span> <span class="p">{</span> <span class="ss">street_1: </span><span class="s1">'New Street'</span><span class="p">,</span> <span class="ss">city: </span><span class="s1">'Albequerque'</span><span class="p">,</span> <span class="ss">state: </span><span class="s1">'NM'</span><span class="p">,</span> <span class="ss">postal_code: </span><span class="s1">'12345'</span><span class="p">,</span> <span class="ss">country_code: </span><span class="s1">'US'</span> <span class="p">})</span>
 </pre>
-<pre class="highlight shell">curl --request POST <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/address?street=New street&amp;city=Albequerque&amp;state=NM&amp;zip=12345"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
+<pre class="highlight shell">curl -X POST <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/address"</span> -d <span class="s1">'{"street_1":"New street","city":"Albequerque","state":"NM","postal_code":"12345", "country_code":"US"}'</span> -H <span class="s2">"X-Api-Token: your_token"</span> -H <span class="s2">"Content-Type: application/json"</span>
 </pre>
 
 <blockquote>
@@ -722,48 +893,61 @@ structured like this:</p>
 </blockquote>
 <pre class="highlight json"><span class="p">{</span><span class="w">
   </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"street"</span><span class="p">:</span><span class="w"> </span><span class="s2">"New Street"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"street_1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"New Street"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"street_2"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
   </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Albequerque"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NM"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"12345"</span><span class="w">
+  </span><span class="s2">"postal_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"12345"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
-<p>This endpoint create a new address for a location.</p>
+<p>This endpoint create a new address for the specified location.</p>
 <h3 id='http-request'>HTTP Request</h3>
 <p><code class="prettyprint">POST https://ohana-api-demo.herokuapp.com/api/locations/:location_id/address</code></p>
-<h3 id='url-parameters'>URL Parameters</h3>
+<h3 id='json-parameters'>JSON Parameters</h3>
 <table><thead>
 <tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Type</th>
-<th>Required?</th>
+<th style="text-align: left">Name</th>
+<th style="text-align: left">Type</th>
+<th style="text-align: left">Requirement</th>
+<th style="text-align: left">Detail</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>street</td>
-<td>The street</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">street_1</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">The primary part of the Street Address</td>
 </tr>
 <tr>
-<td>city</td>
-<td>The city</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">street_2</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">The secondary part of the Street Address, such as the Suite, Room, or Floor number</td>
 </tr>
 <tr>
-<td>state</td>
-<td>The state</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">city</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">The City name</td>
 </tr>
 <tr>
-<td>zip</td>
-<td>The 5-digit ZIP code</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">state</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">2-letter US state abbreviation</td>
+</tr>
+<tr>
+<td style="text-align: left">postal_code</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">A valid postal code. Note that the API currently assumes this will be a US 5 or 9-digit ZIP code. 9-digit ZIP codes are separated with a dash, like this: 94025-9881. If you are using non-US data, you will need to replace the <a href="https://github.com/codeforamerica/ohana-api/blob/master/app/validators/zip_validator.rb">postal code validation</a> with your own.</td>
+</tr>
+<tr>
+<td style="text-align: left">country_code</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">2-letter <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3361-1</a> country code</td>
 </tr>
 </tbody></table>
 
@@ -773,8 +957,7 @@ structured like this:</p>
           <h2 id='update-an-existing-address'>Update an existing address</h2><pre class="highlight ruby"><span class="c1"># Update address with id 1 for location with id 1</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">patch</span><span class="p">(</span><span class="s1">'locations/1/address/1'</span><span class="p">,</span> <span class="p">{</span> <span class="ss">street: </span><span class="s1">'Updated Street'</span> <span class="p">})</span>
 </pre>
-<pre class="highlight shell">curl --request PATCH <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/address/1?street=Updated street"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
+<pre class="highlight shell">curl -X PATCH <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/address/1"</span> -d <span class="s1">'{"street_1":"Updated Street"}'</span> -H <span class="s2">"X-Api-Token: test"</span> -H <span class="s2">"Content-Type: application/json"</span>
 </pre>
 
 <blockquote>
@@ -783,48 +966,61 @@ structured like this:</p>
 </blockquote>
 <pre class="highlight json"><span class="p">{</span><span class="w">
   </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"street"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Updated Street"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"street_1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Updated Street"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"street_2"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
   </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Redwood City"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94065"</span><span class="w">
+  </span><span class="s2">"postal_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94065"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
-<p>This endpoint updates an existing address.</p>
+<p>This endpoint updates an existing address for the specified location.</p>
 <h3 id='http-request'>HTTP Request</h3>
 <p><code class="prettyprint">PATCH https://ohana-api-demo.herokuapp.com/api/locations/:location_id/address/:address_id</code></p>
-<h3 id='url-parameters'>URL Parameters</h3>
+<h3 id='json-parameters'>JSON Parameters</h3>
 <table><thead>
 <tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Type</th>
-<th>Required?</th>
+<th style="text-align: left">Name</th>
+<th style="text-align: left">Type</th>
+<th style="text-align: left">Requirement</th>
+<th style="text-align: left">Detail</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>street</td>
-<td>The street</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">street_1</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">The primary part of the Street Address</td>
 </tr>
 <tr>
-<td>city</td>
-<td>The city</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">street_2</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">The secondary part of the Street Address, such as the Suite, Room, or Floor number</td>
 </tr>
 <tr>
-<td>state</td>
-<td>The state</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">city</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">The City name</td>
 </tr>
 <tr>
-<td>zip</td>
-<td>The 5-digit ZIP code</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">state</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">2-letter US state abbreviation</td>
+</tr>
+<tr>
+<td style="text-align: left">postal_code</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">A valid postal code. Note that the API currently assumes this will be a US 5 or 9-digit ZIP code. 9-digit ZIP codes are separated with a dash, like this: 94025-9881. If you are using non-US data, you will need to replace the <a href="https://github.com/codeforamerica/ohana-api/blob/master/app/validators/zip_validator.rb">postal code validation</a> with your own.</td>
+</tr>
+<tr>
+<td style="text-align: left">country_code</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">2-letter <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3361-1</a> country code</td>
 </tr>
 </tbody></table>
 
@@ -834,8 +1030,7 @@ structured like this:</p>
           <h2 id='delete-an-existing-address'>Delete an existing address</h2><pre class="highlight ruby"><span class="c1"># Delete address with id 1 for location with id 1</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="s1">'locations/1/address/1'</span><span class="p">)</span>
 </pre>
-<pre class="highlight shell">curl --request DELETE <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/address/1"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
+<pre class="highlight shell">curl --request DELETE <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/address/1"</span> -H <span class="s2">"X-Api-Token: your_secret_token"</span>
 </pre>
 
 <blockquote>
@@ -849,175 +1044,6 @@ structured like this:</p>
 <p><aside class="warning">All DELETE requests require a valid token passed via the
 <code class="prettyprint">X-Api-Token</code> HTTP header</aside></p>
 
-          <h1 id='faxes'>Faxes</h1><h2 id='get-all-faxes-belonging-to-a-location'>Get all faxes belonging to a location</h2><pre class="highlight ruby"><span class="c1"># Provide an API Endpoint</span>
-<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
-  <span class="n">c</span><span class="p">.</span><span class="nf">api_endpoint</span> <span class="o">=</span> <span class="s1">'https://ohana-api-demo.herokuapp.com/api'</span>
-<span class="k">end</span>
-
-<span class="c1"># Fetch all faxes belonging to the location with id 1</span>
-<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="s1">'locations/1/faxes'</span><span class="p">)</span>
-</pre>
-<pre class="highlight shell">curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/faxes"</span> <span class="se">\</span>
-  -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
-</pre>
-
-<blockquote>
-<p>The above command returns JSON structured like this:</p>
-</blockquote>
-<pre class="highlight json"><span class="p">[</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"number"</span><span class="p">:</span><span class="w"> </span><span class="s2">"703-555-1212"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"department"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Director of User Experience"</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"number"</span><span class="p">:</span><span class="w"> </span><span class="s2">"703-444-1234"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"department"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Chief Data Officer"</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">]</span><span class="w">
-</span></pre>
-
-<p>This endpoint retrieves all faxes that belong to a particular location.</p>
-<h3 id='http-request'>HTTP Request</h3>
-<p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api/locations/:id/faxes</code></p>
-
-<p>Note that the URL above is just an example for the demo instance.
-To access an API that serves a particular region, you would need to look up
-the appropriate endpoint. All known API deployments are listed in the
-<a href="#live-deployments-of-ohana-api">deployments</a> section at the top of this page.</p>
-<h3 id='query-parameters'>Query Parameters</h3>
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>page</td>
-<td>1</td>
-<td>The particular page of results.</td>
-</tr>
-<tr>
-<td>per_page</td>
-<td>30</td>
-<td>Amount of faxes to return per page, up to 100.</td>
-</tr>
-</tbody></table>
-
-          <h2 id='create-a-new-fax'>Create a new fax</h2><pre class="highlight ruby"><span class="c1"># Create a fax for location with id 1</span>
-<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s1">'locations/1/faxes'</span><span class="p">,</span> <span class="p">{</span> <span class="ss">number: </span><span class="s1">'703-555-1212'</span><span class="p">,</span> <span class="ss">department: </span><span class="s1">'Director of User Experience'</span> <span class="p">})</span>
-</pre>
-<pre class="highlight shell">curl --request POST <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/faxes?number=703-555-1212&amp;department=Director of User Experience"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
-</pre>
-
-<blockquote>
-<p>When successful, the above command returns a <code class="prettyprint">201</code> HTTP status code and JSON
-structured like this:</p>
-</blockquote>
-<pre class="highlight json"><span class="p">{</span><span class="w">
-  </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"number"</span><span class="p">:</span><span class="w"> </span><span class="s2">"703-555-1212"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"department"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Director of User Experience"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></pre>
-
-<p>This endpoint create a new fax for a location.</p>
-<h3 id='http-request'>HTTP Request</h3>
-<p><code class="prettyprint">POST https://ohana-api-demo.herokuapp.com/api/locations/:location_id/faxes</code></p>
-<h3 id='url-parameters'>URL Parameters</h3>
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Type</th>
-<th>Required?</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>number</td>
-<td>The fax number</td>
-<td>String</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>department</td>
-<td>The department for the fax number</td>
-<td>String</td>
-<td>No</td>
-</tr>
-</tbody></table>
-
-<p><aside class="warning">All POST requests require a valid token passed via the
-<code class="prettyprint">X-Api-Token</code> HTTP header</aside></p>
-
-          <h2 id='update-an-existing-fax'>Update an existing fax</h2><pre class="highlight ruby"><span class="c1"># Update fax with id 1 for location with id 1</span>
-<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">patch</span><span class="p">(</span><span class="s1">'locations/1/faxes/1'</span><span class="p">,</span> <span class="p">{</span> <span class="ss">number: </span><span class="s1">'703-444-1234'</span> <span class="p">})</span>
-</pre>
-<pre class="highlight shell">curl --request PATCH <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/faxes/1?number=703-444-1234"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
-</pre>
-
-<blockquote>
-<p>When successful, the above command returns a <code class="prettyprint">200</code> HTTP status code and JSON
-structured like this:</p>
-</blockquote>
-<pre class="highlight json"><span class="p">{</span><span class="w">
-  </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"number"</span><span class="p">:</span><span class="w"> </span><span class="s2">"703-444-1234"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"department"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Redwood City"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></pre>
-
-<p>This endpoint updates an existing fax.</p>
-<h3 id='http-request'>HTTP Request</h3>
-<p><code class="prettyprint">PATCH https://ohana-api-demo.herokuapp.com/api/locations/:location_id/faxes/:fax_id</code></p>
-<h3 id='url-parameters'>URL Parameters</h3>
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Type</th>
-<th>Required?</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>number</td>
-<td>The fax number</td>
-<td>String</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>department</td>
-<td>The department for the fax number</td>
-<td>String</td>
-<td>No</td>
-</tr>
-</tbody></table>
-
-<p><aside class="warning">All PATCH requests require a valid token passed via the
-<code class="prettyprint">X-Api-Token</code> HTTP header</aside></p>
-
-          <h2 id='delete-an-existing-fax'>Delete an existing fax</h2><pre class="highlight ruby"><span class="c1"># Delete fax with id 1 for location with id 1</span>
-<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="s1">'locations/1/faxes/1'</span><span class="p">)</span>
-</pre>
-<pre class="highlight shell">curl --request DELETE <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/faxes/1"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
-</pre>
-
-<blockquote>
-<p>When successful, the above command returns a <code class="prettyprint">204</code> HTTP status code with an empty body.</p>
-</blockquote>
-
-<p>This endpoint deletes an existing fax.</p>
-<h3 id='http-request'>HTTP Request</h3>
-<p><code class="prettyprint">DELETE https://ohana-api-demo.herokuapp.com/api/locations/:location_id/faxes/:fax_id</code></p>
-
-<p><aside class="warning">All DELETE requests require a valid token passed via the
-<code class="prettyprint">X-Api-Token</code> HTTP header</aside></p>
-
           <h1 id='organizations'>Organizations</h1><h2 id='get-all-organizations'>Get all organizations</h2><pre class="highlight ruby"><span class="c1"># Provide an API Endpoint</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
   <span class="n">c</span><span class="p">.</span><span class="nf">api_endpoint</span> <span class="o">=</span> <span class="s1">'https://ohana-api-demo.herokuapp.com/api'</span>
@@ -1026,8 +1052,7 @@ structured like this:</p>
 <span class="c1"># Fetch all organizations</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">organizations</span>
 </pre>
-<pre class="highlight shell">curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations"</span> <span class="se">\</span>
-  -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
+<pre class="highlight shell">curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations"</span> -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
 </pre>
 
 <blockquote>
@@ -1035,20 +1060,28 @@ structured like this:</p>
 </blockquote>
 <pre class="highlight json"><span class="p">[</span><span class="w">
   </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1365</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"South San Francisco Farmers Market"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"south-san-francisco-farmers-market"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
-    </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/south-san-francisco-farmers-market"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/south-san-francisco-farmers-market/locations"</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"An organization created for testing purposes."</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Admin Test Org"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"admin-test-org"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1364</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Saratoga Farmers' Market"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"saratoga-farmers-market"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
-    </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/saratoga-farmers-market"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/saratoga-farmers-market/locations"</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"An organization created for testing purposes."</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Fake Org"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fake-org"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/fake-org"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/fake-org/locations"</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 </span></pre>
@@ -1061,7 +1094,7 @@ structured like this:</p>
 To access an API that serves a particular region, you would need to look up
 the appropriate endpoint. All known API deployments are listed in the
 <a href="#live-deployments-of-ohana-api">deployments</a> section at the top of this page.</p>
-<h3 id='query-parameters'>Query Parameters</h3>
+<h3 id='url-query-parameters'>URL Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1085,10 +1118,10 @@ the appropriate endpoint. All known API deployments are listed in the
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">organization</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="c1"># Find an organization by slug</span>
-<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">organization</span><span class="p">(</span><span class="s1">'redwood-shores-branch'</span><span class="p">)</span>
+<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">organization</span><span class="p">(</span><span class="s1">'peninsula-family-service'</span><span class="p">)</span>
 </pre>
 <pre class="highlight shell"><span class="c"># Find an organization by slug</span>
-curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/redwood-shores-branch"</span>
+curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/peninsula-family-service"</span>
 
 <span class="c"># Find an organization by id</span>
 curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/1"</span>
@@ -1099,67 +1132,128 @@ curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/1"
 structured like this:</p>
 </blockquote>
 <pre class="highlight json"><span class="p">{</span><span class="w">
-  </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1365</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"South San Francisco Farmers Market"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"south-san-francisco-farmers-market"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
-  </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/south-san-francisco-farmers-market"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/south-san-francisco-farmers-market/locations"</span><span class="w">
+  </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"description"</span><span class="p">:</span><span class="s2">"Peninsula Family Service strengthens the community by providing children, families, and older adults the support and tools to realize their full potential and lead healthy, stable lives."</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Peninsula Family Service"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"peninsula-family-service"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/peninsula-family-service"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/peninsula-family-service/locations"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
 <p>This endpoint retrieves a specific organization.</p>
 <h3 id='http-request'>HTTP Request</h3>
-<p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api/organizations/redwood-shores-branch</code></p>
+<p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api/organizations/peninsula-family-service</code></p>
 
 <p>or</p>
 
 <p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api/organizations/1</code></p>
+<h3 id='url-parameters'>URL Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>The ID or slug of the organization to retrieve</td>
+</tr>
+</tbody></table>
 
           <h2 id='create-a-new-organization'>Create a new organization</h2><pre class="highlight ruby"><span class="c1"># Create a new organization</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s1">'organizations'</span><span class="p">,</span> <span class="ss">query: </span><span class="p">{</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">'New Organization'</span> <span class="p">})</span>
 </pre>
-<pre class="highlight shell">curl --request POST <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations?name=New Organization"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
-</pre>
+<pre class="highlight shell">curl -X POST <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations -d '{"</span>name<span class="s2">":"</span>New Organization<span class="s2">","</span>description<span class="s2">":"</span>New description<span class="s2">"}' -H "</span>X-Api-Token: your_token<span class="s2">" -H "</span>Content-Type: application/json<span class="s2">"
+</span></pre>
 
 <blockquote>
 <p>When successful, the above command returns a <code class="prettyprint">201</code> HTTP status code and JSON
 structured like this:</p>
 </blockquote>
 <pre class="highlight json"><span class="p">{</span><span class="w">
-  </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test description"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
   </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"New Organization"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"new-organization"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
-  </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/new-organization"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/new-organization/locations"</span><span class="w">
+  </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/new-organization"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/new-organization/locations"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
 <p>This endpoint creates a new organization.</p>
 <h3 id='http-request'>HTTP Request</h3>
 <p><code class="prettyprint">POST https://ohana-api-demo.herokuapp.com/api/organizations</code></p>
-<h3 id='url-parameters'>URL Parameters</h3>
+<h3 id='json-parameters'>JSON Parameters</h3>
 <table><thead>
 <tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Type</th>
-<th>Required?</th>
+<th style="text-align: left">Name</th>
+<th style="text-align: left">Type</th>
+<th style="text-align: left">Requirement</th>
+<th style="text-align: left">Details</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>name</td>
-<td>The organization&rsquo;s name</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">alternate_name</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Another name this organization might be known by.</td>
 </tr>
 <tr>
-<td>urls</td>
-<td>A list of the organization&rsquo;s websites</td>
-<td>Array of Strings</td>
-<td>No</td>
+<td style="text-align: left">date_incorporated</td>
+<td style="text-align: left">Date</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">The date this organization was incorporated.</td>
+</tr>
+<tr>
+<td style="text-align: left">description</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">A description of what the organization does.</td>
+</tr>
+<tr>
+<td style="text-align: left">email</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">The organization&rsquo;s primary email.</td>
+</tr>
+<tr>
+<td style="text-align: left">legal_status</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">The conditions an organization is operating under; e.g. non-profit, private corporation or a government organization.</td>
+</tr>
+<tr>
+<td style="text-align: left">name</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">Name of the organization</td>
+</tr>
+<tr>
+<td style="text-align: left">tax_id</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Tax identifier, such as Federal Employer Identification Number.</td>
+</tr>
+<tr>
+<td style="text-align: left">tax_status</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Internal Revenue Service tax designation, such as <code class="prettyprint">501(c)(3)</code> for tax-exempt organizations.</td>
+</tr>
+<tr>
+<td style="text-align: left">website</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">The organization&rsquo;s website</td>
 </tr>
 </tbody></table>
 
@@ -1169,8 +1263,7 @@ structured like this:</p>
           <h2 id='update-an-existing-organization'>Update an existing organization</h2><pre class="highlight ruby"><span class="c1"># Update organization whose id is 1</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">patch</span><span class="p">(</span><span class="s1">'organizations/1'</span><span class="p">,</span> <span class="ss">query: </span><span class="p">{</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">'Updated Name'</span> <span class="p">})</span>
 </pre>
-<pre class="highlight shell">curl --request PATCH <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/1?name=Updated Name"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
+<pre class="highlight shell">curl -X PATCH <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/1/address/1"</span> -d <span class="s1">'{"name":"Updated Name"}'</span> -H <span class="s2">"X-Api-Token: test"</span> -H <span class="s2">"Content-Type: application/json"</span>
 </pre>
 
 <blockquote>
@@ -1179,37 +1272,83 @@ structured like this:</p>
 </blockquote>
 <pre class="highlight json"><span class="p">{</span><span class="w">
   </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test description"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
   </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Updated Name"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"updated-name"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
-  </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/updated-name"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/updated-name/locations"</span><span class="w">
+  </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
 <p>This endpoint updates an existing organization.</p>
 <h3 id='http-request'>HTTP Request</h3>
 <p><code class="prettyprint">PATCH https://ohana-api-demo.herokuapp.com/api/organizations/1</code></p>
-<h3 id='url-parameters'>URL Parameters</h3>
+<h3 id='json-parameters'>JSON Parameters</h3>
 <table><thead>
 <tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Type</th>
-<th>Required?</th>
+<th style="text-align: left">Name</th>
+<th style="text-align: left">Type</th>
+<th style="text-align: left">Requirement</th>
+<th style="text-align: left">Details</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>name</td>
-<td>The organization&rsquo;s name</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">alternate_name</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Another name this organization might be known by.</td>
 </tr>
 <tr>
-<td>urls</td>
-<td>A list of the organization&rsquo;s websites</td>
-<td>Array of Strings</td>
-<td>No</td>
+<td style="text-align: left">date_incorporated</td>
+<td style="text-align: left">Date</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">The date this organization was incorporated.</td>
+</tr>
+<tr>
+<td style="text-align: left">description</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">A description of what the organization does.</td>
+</tr>
+<tr>
+<td style="text-align: left">email</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">The organization&rsquo;s primary email.</td>
+</tr>
+<tr>
+<td style="text-align: left">legal_status</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">The conditions an organization is operating under; e.g. non-profit, private corporation or a government organization.</td>
+</tr>
+<tr>
+<td style="text-align: left">name</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">Name of the organization</td>
+</tr>
+<tr>
+<td style="text-align: left">tax_id</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Tax identifier, such as Federal Employer Identification Number.</td>
+</tr>
+<tr>
+<td style="text-align: left">tax_status</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Internal Revenue Service tax designation, such as <code class="prettyprint">501(c)(3)</code> for tax-exempt organizations.</td>
+</tr>
+<tr>
+<td style="text-align: left">website</td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">The organization&rsquo;s website</td>
 </tr>
 </tbody></table>
 
@@ -1219,8 +1358,7 @@ structured like this:</p>
           <h2 id='delete-an-existing-organization'>Delete an existing organization</h2><pre class="highlight ruby"><span class="c1"># Delete organization with id 1</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="s1">'organizations/1'</span><span class="p">)</span>
 </pre>
-<pre class="highlight shell">curl --request DELETE <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/1"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
+<pre class="highlight shell">curl --request DELETE <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/1"</span> -H <span class="s2">"X-Api-Token: your_secret_token"</span>
 </pre>
 
 <blockquote>
@@ -1242,8 +1380,7 @@ structured like this:</p>
 <span class="c1"># Fetch all locations belonging to the organization with id 1</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="s1">'organizations/1/locations'</span><span class="p">)</span>
 </pre>
-<pre class="highlight shell">curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/1/locations"</span> <span class="se">\</span>
-  -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
+<pre class="highlight shell">curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/1/locations"</span> -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
 </pre>
 
 <blockquote>
@@ -1266,21 +1403,25 @@ structured like this:</p>
     </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-09-10T08:21:14.853-07:00"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
     </span><span class="s2">"contacts_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/contacts"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"faxes_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/faxes"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"services_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/services"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">28</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"street"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1290 Ridder Park Drive"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"street_1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1290 Ridder Park Drive"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"street_2"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"San Francisco"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94103"</span><span class="w">
+      </span><span class="s2">"postal_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94103"</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"organization"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test description"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Admin Test Org"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"admin-test-org"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"</span><span class="w">
     </span><span class="p">},</span><span class="w">
@@ -1302,21 +1443,25 @@ structured like this:</p>
     </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-09-10T08:21:14.848-07:00"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
     </span><span class="s2">"contacts_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service/contacts"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"faxes_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service/faxes"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"services_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service/services"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">27</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"street"</span><span class="p">:</span><span class="w"> </span><span class="s2">"155 9th St"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"street_1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"155 9th St"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"street_2"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"San Francisco"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94103"</span><span class="w">
+      </span><span class="s2">"postal_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94103"</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"organization"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test description"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Admin Test Org"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"admin-test-org"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"</span><span class="w">
     </span><span class="p">},</span><span class="w">
@@ -1333,7 +1478,7 @@ structured like this:</p>
 To access an API that serves a particular region, you would need to look up
 the appropriate endpoint. All known API deployments are listed in the
 <a href="#live-deployments-of-ohana-api">deployments</a> section at the top of this page.</p>
-<h3 id='query-parameters'>Query Parameters</h3>
+<h3 id='url-query-parameters'>URL Query Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1361,8 +1506,7 @@ the appropriate endpoint. All known API deployments are listed in the
 <span class="c1"># Fetch all services belonging to the location with id 1</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="s1">'locations/1/services'</span><span class="p">)</span>
 </pre>
-<pre class="highlight shell">curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/services"</span> <span class="se">\</span>
-  -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
+<pre class="highlight shell">curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/services"</span> -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
 </pre>
 
 <blockquote>
@@ -1427,8 +1571,7 @@ the appropriate endpoint. All known API deployments are listed in the
           <h2 id='create-a-new-service'>Create a new service</h2><pre class="highlight ruby"><span class="c1"># Create a service for location with id 1</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s1">'locations/1/services'</span><span class="p">,</span> <span class="p">{</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">'Free Eye Exam'</span><span class="p">,</span> <span class="ss">audience: </span><span class="s1">'Low-income children between the ages of 5 and 12.'</span><span class="p">,</span> <span class="ss">description: </span><span class="s1">'Provides free eye exams for low-income children between the ages of 5 and 12.'</span> <span class="p">})</span>
 </pre>
-<pre class="highlight shell">curl --request POST <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/servicees?audience=Low-income children&amp;description=Provides free eye exams for low-income children between the ages of 5 and 12&amp;name=Free Eye Exam"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
+<pre class="highlight shell">curl -X POST <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/services"</span> -d <span class="s1">'{"audience":"Low-income children","description":"Provides free eye exams for low-income children between the ages of 5 and 12","name":"Free Eye Exam"}'</span> -H <span class="s2">"X-Api-Token: your_token"</span> -H <span class="s2">"Content-Type: application/json"</span>
 </pre>
 
 <blockquote>
@@ -1456,87 +1599,93 @@ structured like this:</p>
 
 <p>This endpoint create a new service for a location.</p>
 <h3 id='http-request'>HTTP Request</h3>
-<p><code class="prettyprint">POST https://ohana-api-demo.herokuapp.com/api/locations/:location_id/servicees</code></p>
-<h3 id='url-parameters'>URL Parameters</h3>
+<p><code class="prettyprint">POST https://ohana-api-demo.herokuapp.com/api/locations/:location_id/services</code></p>
+<h3 id='json-parameters'>JSON Parameters</h3>
 <table><thead>
 <tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Type</th>
-<th>Required?</th>
+<th style="text-align: left">Name</th>
+<th style="text-align: left">Type</th>
+<th style="text-align: left">Requirement</th>
+<th style="text-align: left">Detail</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>audience</td>
-<td>The service number</td>
-<td>String</td>
-<td>No</td>
+<td style="text-align: left">audience</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Group of people served</td>
 </tr>
 <tr>
-<td>description</td>
-<td>The department for the service number</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">categories</td>
+<td style="text-align: left">array of objects</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Categories assigned to the service based on the Open Eligibility taxonomy. See the <a href="#categories">Categories</a> section for more details.</td>
 </tr>
 <tr>
-<td>eligibility</td>
-<td>The department for the service number</td>
-<td>String</td>
-<td>No</td>
+<td style="text-align: left">description</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Description of the service provided</td>
 </tr>
 <tr>
-<td>fees</td>
-<td>The department for the service number</td>
-<td>String</td>
-<td>No</td>
+<td style="text-align: left">eligibility</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Requirements to receive the service</td>
 </tr>
 <tr>
-<td>funding_sources</td>
-<td>The department for the service number</td>
-<td>String</td>
-<td>No</td>
+<td style="text-align: left">fees</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Fees charged to receive the service</td>
 </tr>
 <tr>
-<td>how_to_apply</td>
-<td>The department for the service number</td>
-<td>String</td>
-<td>No</td>
+<td style="text-align: left">funding_sources</td>
+<td style="text-align: left">array of strings</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Source of funds used to support the service</td>
 </tr>
 <tr>
-<td>keywords</td>
-<td>A list of keywords that pertain to this service.</td>
-<td>Array of Strings</td>
-<td>No</td>
+<td style="text-align: left">keywords</td>
+<td style="text-align: left">array of strings</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Keywords that define this service for search purposes</td>
 </tr>
 <tr>
-<td>name</td>
-<td>The name of the service</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">how_to_apply</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Description of how to apply to receive the service</td>
 </tr>
 <tr>
-<td>service_areas</td>
-<td>The department for the service number</td>
-<td>String</td>
-<td>No</td>
+<td style="text-align: left">name</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Name of the service</td>
 </tr>
 <tr>
-<td>short_desc</td>
-<td>The department for the service number</td>
-<td>String</td>
-<td>No</td>
+<td style="text-align: left">service_areas</td>
+<td style="text-align: left">array of strings</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Cities and Counties served. The values will typically be validated against a list of service areas defined in a deployment&rsquo;s <a href="https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L132-152">settings.yml</a>.</td>
 </tr>
 <tr>
-<td>urls</td>
-<td>The department for the service number</td>
-<td>String</td>
-<td>No</td>
+<td style="text-align: left">short_desc</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Succinct description of the service provided. 200 characters maximum.</td>
 </tr>
 <tr>
-<td>wait</td>
-<td>The department for the service number</td>
-<td>String</td>
-<td>No</td>
+<td style="text-align: left">urls</td>
+<td style="text-align: left">array of strings</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">The service&rsquo;s website URLs. Must include &ldquo;http://&rdquo; or &ldquo;https://&rdquo;</td>
+</tr>
+<tr>
+<td style="text-align: left">wait</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Wait times associated with the service</td>
 </tr>
 </tbody></table>
 
@@ -1544,10 +1693,9 @@ structured like this:</p>
 <code class="prettyprint">X-Api-Token</code> HTTP header</aside></p>
 
           <h2 id='update-an-existing-service'>Update an existing service</h2><pre class="highlight ruby"><span class="c1"># Update service with id 1 for location with id 1</span>
-<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">patch</span><span class="p">(</span><span class="s1">'locations/1/service/1'</span><span class="p">,</span> <span class="p">{</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">'Updated Service'</span> <span class="p">})</span>
+<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">patch</span><span class="p">(</span><span class="s1">'locations/1/services/1'</span><span class="p">,</span> <span class="p">{</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">'Updated Service'</span> <span class="p">})</span>
 </pre>
-<pre class="highlight shell">curl --request PATCH <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/service/1?name=Updated Service"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
+<pre class="highlight shell">curl -X PATCH <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/services/1"</span> -d <span class="s1">'{"name":"Updated Service"}'</span> -H <span class="s2">"X-Api-Token: test"</span> -H <span class="s2">"Content-Type: application/json"</span>
 </pre>
 
 <blockquote>
@@ -1580,41 +1728,95 @@ structured like this:</p>
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
-<p>This endpoint updates an existing service.</p>
+<p>This endpoint updates an existing service for the specified location.</p>
 <h3 id='http-request'>HTTP Request</h3>
-<p><code class="prettyprint">PATCH https://ohana-api-demo.herokuapp.com/api/locations/:location_id/service/:service_id</code></p>
-<h3 id='url-parameters'>URL Parameters</h3>
+<p><code class="prettyprint">PATCH https://ohana-api-demo.herokuapp.com/api/locations/:location_id/services/:service_id</code></p>
+<h3 id='json-parameters'>JSON Parameters</h3>
 <table><thead>
 <tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Type</th>
-<th>Required?</th>
+<th style="text-align: left">Name</th>
+<th style="text-align: left">Type</th>
+<th style="text-align: left">Requirement</th>
+<th style="text-align: left">Detail</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>street</td>
-<td>The street</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">audience</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Group of people served</td>
 </tr>
 <tr>
-<td>city</td>
-<td>The city</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">categories</td>
+<td style="text-align: left">array of objects</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Categories assigned to the service based on the Open Eligibility taxonomy. See the <a href="#categories">Categories</a> section for more details.</td>
 </tr>
 <tr>
-<td>state</td>
-<td>The state</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">description</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Description of the service provided</td>
 </tr>
 <tr>
-<td>zip</td>
-<td>The 5-digit ZIP code</td>
-<td>String</td>
-<td>Yes</td>
+<td style="text-align: left">eligibility</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Requirements to receive the service</td>
+</tr>
+<tr>
+<td style="text-align: left">fees</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Fees charged to receive the service</td>
+</tr>
+<tr>
+<td style="text-align: left">funding_sources</td>
+<td style="text-align: left">array of strings</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Source of funds used to support the service</td>
+</tr>
+<tr>
+<td style="text-align: left">keywords</td>
+<td style="text-align: left">array of strings</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Keywords that define this service for search purposes</td>
+</tr>
+<tr>
+<td style="text-align: left">how_to_apply</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Description of how to apply to receive the service</td>
+</tr>
+<tr>
+<td style="text-align: left">name</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Name of the service</td>
+</tr>
+<tr>
+<td style="text-align: left">service_areas</td>
+<td style="text-align: left">array of strings</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Cities and Counties served. The values will typically be validated against a list of service areas defined in a deployment&rsquo;s <a href="https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L132-152">settings.yml</a>.</td>
+</tr>
+<tr>
+<td style="text-align: left">short_desc</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Succinct description of the service provided. 200 characters maximum.</td>
+</tr>
+<tr>
+<td style="text-align: left">urls</td>
+<td style="text-align: left">array of strings</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">The service&rsquo;s website URLs. Must include &ldquo;http://&rdquo; or &ldquo;https://&rdquo;</td>
+</tr>
+<tr>
+<td style="text-align: left">wait</td>
+<td style="text-align: left">string</td>
+<td style="text-align: left">optional</td>
+<td style="text-align: left">Wait times associated with the service</td>
 </tr>
 </tbody></table>
 
@@ -1624,8 +1826,7 @@ structured like this:</p>
           <h2 id='delete-an-existing-service'>Delete an existing service</h2><pre class="highlight ruby"><span class="c1"># Delete service with id 1 for location with id 1</span>
 <span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="s1">'locations/1/service/1'</span><span class="p">)</span>
 </pre>
-<pre class="highlight shell">curl --request DELETE <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/service/1"</span> <span class="se">\</span>
-  -H <span class="s2">"X-Api-Token: your_secret_token"</span>
+<pre class="highlight shell">curl --request DELETE <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/1/service/1"</span> -H <span class="s2">"X-Api-Token: your_secret_token"</span>
 </pre>
 
 <blockquote>
