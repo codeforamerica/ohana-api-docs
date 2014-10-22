@@ -73,9 +73,11 @@
 <h2 id='summary-representations'>Summary Representations</h2>
 <p>When you fetch a list of locations (via either the <code class="prettyprint">locations</code> or the <code class="prettyprint">search</code> endpoint), the response includes a subset of the attributes for that location. This is the “summary” representation of the resource. Some attributes are computationally expensive for the API to provide. For performance reasons, the summary representation excludes those attributes. To obtain those attributes, fetch the “detailed” representation.</p>
 
-<p>The attributes that are excluded are <code class="prettyprint">accessibility</code>, <code class="prettyprint">emails</code>, <code class="prettyprint">hours</code>, <code class="prettyprint">languages</code>, and <code class="prettyprint">transportation</code>. The associated <code class="prettyprint">contacts</code> and <code class="prettyprint">services</code> are also excluded, but the URLs to those representations are provided as <code class="prettyprint">contacts_url</code> and <code class="prettyprint">services_url</code>.</p>
+<p>The attributes that are excluded from the <code class="prettyprint">/search</code> and <code class="prettyprint">/locations</code> endpoints are <code class="prettyprint">accessibility</code>, <code class="prettyprint">emails</code>, <code class="prettyprint">hours</code>, <code class="prettyprint">languages</code>, and <code class="prettyprint">transportation</code>. The associated <code class="prettyprint">contacts</code> and <code class="prettyprint">services</code> are also excluded, but the URLs to those representations are provided as <code class="prettyprint">contacts_url</code> and <code class="prettyprint">services_url</code>.</p>
 
 <p>The attributes provided in the summary representation are defined in the <a href="https://github.com/codeforamerica/ohana-api/blob/master/app/serializers/locations_serializer.rb">Locations Serializer</a>.</p>
+
+<p>The <a href="#nearby">nearby</a> endpoint returns an even smaller JSON representation consisting of the following attributes: <code class="prettyprint">id</code>, <code class="prettyprint">alternate_name</code>, <code class="prettyprint">latitude</code>, <code class="prettyprint">longitude</code>, <code class="prettyprint">name</code>, <code class="prettyprint">slug</code>, <code class="prettyprint">address</code>.</p>
 <h2 id='detailed-representations'>Detailed Representations</h2>
 <p>When you fetch an individual resource, the response typically includes all attributes for that resource. This is the “detailed” representation of the resource.</p>
 
@@ -217,9 +219,12 @@ Access-Control-Allow-Credentials: <span class="nb">true
 <p>The root endpoint returns JSON structured like this:</p>
 </blockquote>
 <pre class="highlight json"><span class="p">{</span><span class="w">
-  </span><span class="s2">"organizations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations{/organization_id}"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations{/location_id}"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"location_search_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/search{?category,keyword,language,lat_lng,location,radius,org_name}"</span><span class="w">
+  </span><span class="s2">"organizations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations{?page,per_page}"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"organization_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/{organization}"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"organization_locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/{organization}/locations{?page,per_page}"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations{?page,per_page}"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"location_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/{location}"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"location_search_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/search{?category,email,keyword,language,lat_lng,org_name,radius,service_area,page,per_page}"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
@@ -2556,7 +2561,7 @@ structured like this:</p>
 </blockquote>
 <pre class="highlight json"><span class="p">[</span><span class="w">
   </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">31</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">22</span><span class="p">,</span><span class="w">
     </span><span class="s2">"admin_emails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
     </span><span class="s2">"coordinates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
       </span><span class="mf">-122.4456187</span><span class="p">,</span><span class="w">
@@ -2613,7 +2618,7 @@ structured like this:</p>
     </span><span class="p">]</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w">
     </span><span class="s2">"admin_emails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
     </span><span class="s2">"coordinates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
       </span><span class="mf">-122.4136494</span><span class="p">,</span><span class="w">
@@ -2696,6 +2701,64 @@ structured like this:</p>
 <tr>
 <td>service_area</td>
 <td>Find locations whose services are available in a particular service area. For example: <code class="prettyprint">https://ohana-api-demo.herokuapp.com/api/search?service_area=belmont</code>. The list of valid service areas will usually be defined in a deployment&rsquo;s <a href="https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L152-172">settings.yml</a>.</td>
+</tr>
+<tr>
+<td>page</td>
+<td>The particular page of results. Default is 1.</td>
+</tr>
+<tr>
+<td>per_page</td>
+<td>Amount of locations to return per page, up to 100. Default is 30.</td>
+</tr>
+</tbody></table>
+
+          <h1 id='nearby'>Nearby</h1><h2 id='find-locations-that-are-near-a-specific-location-'>Find locations that are near a specific location.</h2><pre class="highlight ruby"><span class="c1"># Provide an API Endpoint</span>
+<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
+  <span class="n">c</span><span class="p">.</span><span class="nf">api_endpoint</span> <span class="o">=</span> <span class="s1">'https://ohana-api-demo.herokuapp.com/api'</span>
+<span class="k">end</span>
+
+<span class="c1"># Fetch all locations within 2 miles of ZIP code 94103</span>
+<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="s1">'locations/22/nearby'</span><span class="p">,</span> <span class="ss">radius: </span><span class="mi">2</span><span class="p">)</span>
+</pre>
+<pre class="highlight shell">curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/22/nearby?radius=2"</span> -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
+</pre>
+
+<blockquote>
+<p>The above command returns a summarized JSON representation containing the following location attributes:</p>
+</blockquote>
+<pre class="highlight json"><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"latitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">37.7517064</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"longitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">-122.4456187</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"New location test"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"new-location-test"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">28</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"street_1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1290 Ridder Park Drive"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"street_2"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"San Francisco"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"postal_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94103"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></pre>
+
+<p>This endpoint retrieves all locations that are near the specified location.</p>
+<h3 id='http-request'>HTTP Request</h3>
+<p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api/locations/:location_id/nearby</code></p>
+<h3 id='url-query-parameters'>URL Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>radius</td>
+<td>Default in miles is 0.5, minimum is 0.1, and maximum is 50.</td>
 </tr>
 <tr>
 <td>page</td>
