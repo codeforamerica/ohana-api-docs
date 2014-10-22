@@ -81,7 +81,7 @@ This endpoint updates an existing service for the specified location.
 | languages | array of strings | optional | Languages in which this service is provided. You can define the list of all possible languages in [settings.yml](https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L56-143). |
 | name | string | required | Name of the service |
 | required_documents | array of strings | optional | The documents that are required to receive this service. You can define the list of all possible documents in [settings.yml](https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L145-150). |
-| service_areas | array of strings | optional | Cities, Counties, or other geographical area served. The values will typically be validated against a list of service areas defined in a deployment's [settings.yml](https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L132-152). |
+| service_areas | array of strings | optional | Cities, Counties, or other geographical area served. The values will typically be validated against a list of service areas defined in a deployment's [settings.yml](https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L152-172). |
 | status | string | required | Must be one of `active`, `defunct`, or `inactive`. |
 | wait | string | optional | Wait times associated with the service |
 | website | string | optional | The service's website. Must include "http://" or "https://" |
