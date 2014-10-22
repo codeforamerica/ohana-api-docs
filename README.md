@@ -49,6 +49,10 @@ the browser should automatically update.
 
 ### Publish the website (for those who have write access to this repo)
 
+    # after committing all changes
+    git push origin master
+
+    # after verifying that the code has been pushed to GitHub
     rake publish
 
 Learn more about [editing Slate markdown](https://github.com/tripit/slate/wiki/Markdown-Syntax).
