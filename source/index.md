@@ -46,6 +46,9 @@ includes:
   - delete_service
   - search
   - nearby
+  - categories
+  - get_category_children
+  - update_service_categories
   - pagination
   - errors
 
