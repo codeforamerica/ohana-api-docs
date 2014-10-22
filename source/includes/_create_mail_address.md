@@ -1,14 +1,14 @@
-# Address
+# Mail Address
 
-## Create a new address
+## Create a new mail address
 
 ```ruby
-# Create an address for location with id 1
-Ohanakapa.post('locations/1/address/', { street_1: 'New Street', city: 'Albequerque', state: 'NM', postal_code: '12345', country_code: 'US' })
+# Create a mail address for location with id 1
+Ohanakapa.post('locations/1/mail_address/', { street_1: 'New Street', city: 'Albequerque', state: 'NM', postal_code: '12345', country_code: 'US' })
 ```
 
 ```shell
-curl -X POST "https://ohana-api-demo.herokuapp.com/api/locations/1/address" -d '{"street_1":"New street","city":"Albequerque","state":"NM","postal_code":"12345", "country_code":"US"}' -H "X-Api-Token: your_token" -H "Content-Type: application/json"
+curl -X POST "https://ohana-api-demo.herokuapp.com/api/locations/1/mail_address" -d '{"street_1":"New street","city":"Albequerque","state":"NM","postal_code":"12345", "country_code":"US"}' -H "X-Api-Token: your_token" -H "Content-Type: application/json"
 ```
 
 > When successful, the above command returns a `201` HTTP status code and JSON
@@ -17,6 +17,7 @@ curl -X POST "https://ohana-api-demo.herokuapp.com/api/locations/1/address" -d '
 ```json
 {
   "id": 2,
+  "attention": null,
   "street_1": "New Street",
   "street_2": null,
   "city": "Albequerque",
@@ -25,17 +26,18 @@ curl -X POST "https://ohana-api-demo.herokuapp.com/api/locations/1/address" -d '
 }
 ```
 
-This endpoint creates a new address for the specified location.
+This endpoint creates a new mail address for the specified location.
 
 ### HTTP Request
 
-`POST https://ohana-api-demo.herokuapp.com/api/locations/:location_id/address`
+`POST https://ohana-api-demo.herokuapp.com/api/locations/:location_id/mail_address`
 
 ### JSON Parameters
 
 | Name | Type | Requirement | Detail |
 |:-----|:-----|:---------|:-------|
-| street_1 | string | required | The primary part of the Street Address |
+| attention | string | optional | Any person the letter might be addressed to. |
+| street_1 | string | required | The primary part of the Street Address or P.O. Box number. |
 | street_2 | string | optional | The secondary part of the Street Address, such as the Suite, Room, or Floor number |
 | city | string | required | The City name |
 | state | string | required | 2-letter US state abbreviation |

@@ -16,6 +16,12 @@ includes:
   - authentication
   - cors
   - root
+  - organizations
+  - get_organization
+  - post_organization
+  - patch_organization
+  - delete_organization
+  - get_organization_locations
   - locations
   - get_location
   - create_location
@@ -24,12 +30,16 @@ includes:
   - create_address
   - patch_address
   - delete_address
-  - organizations
-  - get_organization
-  - post_organization
-  - patch_organization
-  - delete_organization
-  - get_organization_locations
+  - create_mail_address
+  - patch_mail_address
+  - delete_mail_address
+  - get_location_contacts
+  - create_contact
+  - update_contact
+  - delete_contact
+  - create_phone
+  - update_phone
+  - delete_phone
   - get_location_services
   - create_service
   - patch_service
