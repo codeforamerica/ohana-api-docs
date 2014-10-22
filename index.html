@@ -2770,6 +2770,206 @@ structured like this:</p>
 </tr>
 </tbody></table>
 
+          <h1 id='categories'>Categories</h1><h2 id='get-all-categories'>Get all categories</h2><pre class="highlight ruby"><span class="c1"># Provide an API Endpoint</span>
+<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
+  <span class="n">c</span><span class="p">.</span><span class="nf">api_endpoint</span> <span class="o">=</span> <span class="s1">'https://ohana-api-demo.herokuapp.com/api'</span>
+<span class="k">end</span>
+
+<span class="c1"># Fetch all locations</span>
+<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">categories</span>
+</pre>
+<pre class="highlight shell">curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/categories"</span> -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
+</pre>
+
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"depth"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"oe_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"101"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Emergency"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"depth"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"oe_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"101-01"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Disaster Response"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"depth"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"oe_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"101-02"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Emergency Cash"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"depth"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"oe_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"101-02-01"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Help Pay for Food"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></pre>
+
+<p>This endpoint retrieves all categories.</p>
+<h3 id='http-request'>HTTP Request</h3>
+<p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api/categories</code></p>
+
+<p>The categories are based on the taxonomy used by the instance of the API. By default, the API uses the <a href="http://openeligibility.org/">Open Eligibility</a> Human Services taxonomy. Categories are organized in a tree structure using the <a href="https://github.com/stefankroes/ancestry">Ancestry gem</a>.</p>
+
+          <h2 id='get-a-category39s-children-categories'>Get a category&rsquo;s children categories</h2><pre class="highlight ruby"><span class="c1"># Provide an API Endpoint</span>
+<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
+  <span class="n">c</span><span class="p">.</span><span class="nf">api_endpoint</span> <span class="o">=</span> <span class="s1">'https://ohana-api-demo.herokuapp.com/api'</span>
+<span class="k">end</span>
+
+<span class="c1"># Fetch all children of the category with a specific `oe_id`.</span>
+<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="s1">'categories/:category_oe_id/children'</span><span class="p">)</span>
+</pre>
+<pre class="highlight shell"><span class="c"># Fetch all children of the category with a specific `oe_id`.</span>
+
+curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/categories/101/children"</span> -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
+</pre>
+
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"depth"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"oe_id"</span><span class="p">:</span><span class="s2">"101-01"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"Disaster Response"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="mi">1</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"depth"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"oe_id"</span><span class="p">:</span><span class="s2">"101-02"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"Emergency Cash"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="mi">1</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"depth"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"oe_id"</span><span class="p">:</span><span class="s2">"101-03"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"Emergency Food"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="mi">1</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+   </span><span class="s2">"id"</span><span class="p">:</span><span class="mi">11</span><span class="p">,</span><span class="w">
+   </span><span class="s2">"depth"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="w">
+   </span><span class="s2">"oe_id"</span><span class="p">:</span><span class="s2">"101-04"</span><span class="p">,</span><span class="w">
+   </span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"Emergency Shelter"</span><span class="p">,</span><span class="w">
+   </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="mi">1</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"depth"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"oe_id"</span><span class="p">:</span><span class="s2">"101-05"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"Help Find Missing Persons"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="mi">1</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="mi">13</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"depth"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"oe_id"</span><span class="p">:</span><span class="s2">"101-06"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"Immediate Safety"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="mi">1</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="mi">16</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"depth"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"oe_id"</span><span class="p">:</span><span class="s2">"101-07"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"Psychiatric Emergency Services"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="mi">1</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></pre>
+
+<p>This endpoint retrieves all children categories of a specific category.</p>
+<h3 id='http-request'>HTTP Request</h3>
+<p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api/categories/:category_oe_id/children</code></p>
+
+          <h2 id='update-a-service39s-categories'>Update a service&rsquo;s categories</h2><pre class="highlight ruby"><span class="c1"># Update categories for the service with id 1 by passing in an array of</span>
+<span class="c1"># oe_ids.</span>
+<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">put</span><span class="p">(</span><span class="s1">'services/1/categories'</span><span class="p">,</span> <span class="p">{</span> <span class="ss">oe_ids: </span><span class="o">[</span><span class="s1">'101'</span><span class="p">,</span> <span class="s1">'102'</span><span class="o">]</span> <span class="p">})</span>
+</pre>
+<pre class="highlight shell"><span class="c"># Update categories for the service with id 1 by passing in an array of</span>
+<span class="c"># oe_ids.</span>
+
+curl -X PUT <span class="s2">"https://ohana-api-demo.herokuapp.com/api/services/1/categories"</span> -d <span class="s1">'{"oe_ids": ["101", "102"]}'</span> -H <span class="s2">"X-Api-Token: your_token"</span> -H <span class="s2">"Content-Type: application/json"</span>
+</pre>
+
+<blockquote>
+<p>When successful, the above command returns the updated service with a <code class="prettyprint">200</code> HTTP status code:</p>
+</blockquote>
+<pre class="highlight json"><span class="p">{</span><span class="w">
+  </span><span class="s2">"id"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"accepted_payments"</span><span class="p">:[],</span><span class="w">
+  </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"audience"</span><span class="p">:</span><span class="s2">"Older adults age 55 or over, ethnic minorities and low-income persons"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"description"</span><span class="p">:</span><span class="s2">"A walk-in center for older adults that provides social services, wellness, recreational, educational and creative activities including arts and crafts, computer classes and gardening classes."</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"eligibility"</span><span class="p">:</span><span class="s2">"Age 55 or over for most programs, age 60 or over for lunch program"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"email"</span><span class="p">:</span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"fees"</span><span class="p">:</span><span class="s2">"$2.50 suggested donation for lunch for age 60 or over, donations for other services appreciated. Cash and checks accepted."</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"funding_sources"</span><span class="p">:[</span><span class="s2">"City"</span><span class="p">,</span><span class="s2">"County"</span><span class="p">,</span><span class="s2">"Donations"</span><span class="p">,</span><span class="s2">"Fees"</span><span class="p">,</span><span class="s2">"Fundraising"</span><span class="p">],</span><span class="w">
+  </span><span class="s2">"how_to_apply"</span><span class="p">:</span><span class="s2">"Walk in or apply by phone."</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"keywords"</span><span class="p">:[],</span><span class="w">
+  </span><span class="s2">"languages"</span><span class="p">:[],</span><span class="w">
+  </span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"Fair Oaks Adult Activity Center"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"required_documents"</span><span class="p">:[],</span><span class="w">
+  </span><span class="s2">"service_areas"</span><span class="p">:[</span><span class="s2">"Colma"</span><span class="p">],</span><span class="w">
+  </span><span class="s2">"status"</span><span class="p">:</span><span class="s2">"active"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"website"</span><span class="p">:</span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"wait"</span><span class="p">:</span><span class="s2">"No wait."</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="s2">"2014-10-21T16:02:55.656-07:00"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"categories"</span><span class="p">:[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"depth"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"oe_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"101"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Emergency"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">17</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"depth"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"oe_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"102"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Food"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre>
+
+<p>This endpoint updates a service with the specified categories.</p>
+<h3 id='http-request'>HTTP Request</h3>
+<p><code class="prettyprint">PUT https://ohana-api-demo.herokuapp.com/api/services/:service_id/categories</code></p>
+<h3 id='json-parameters'>JSON Parameters</h3>
+<table><thead>
+<tr>
+<th style="text-align: left">Name</th>
+<th style="text-align: left">Type</th>
+<th style="text-align: left">Requirement</th>
+<th style="text-align: left">Detail</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left">oe_ids</td>
+<td style="text-align: left">Array</td>
+<td style="text-align: left">required</td>
+<td style="text-align: left">An array of valid <code class="prettyprint">oe_id</code>s.</td>
+</tr>
+</tbody></table>
+
+<p><aside class="warning">All PUT requests require a valid token passed via the
+<code class="prettyprint">X-Api-Token</code> HTTP header</aside></p>
+
           <h1 id='pagination'>Pagination</h1>
 <p>Requests that return multiple items will be paginated to 30 items by default. You can specify further pages with the <code class="prettyprint">?page</code> parameter. For some resources, you can also set a custom page size up to 100 with the <code class="prettyprint">?per_page</code> parameter.</p>
 
