@@ -8,9 +8,12 @@ Sending a `GET` request to the root endpoint will return all endpoint categories
 
 ```json
 {
-  "organizations_url": "https://ohana-api-demo.herokuapp.com/api/organizations{/organization_id}",
-  "locations_url": "https://ohana-api-demo.herokuapp.com/api/locations{/location_id}",
-  "location_search_url": "https://ohana-api-demo.herokuapp.com/api/search{?category,keyword,language,lat_lng,location,radius,org_name}"
+  "organizations_url": "https://ohana-api-demo.herokuapp.com/api/organizations{?page,per_page}",
+  "organization_url": "https://ohana-api-demo.herokuapp.com/api/organizations/{organization}",
+  "organization_locations_url": "https://ohana-api-demo.herokuapp.com/api/organizations/{organization}/locations{?page,per_page}",
+  "locations_url": "https://ohana-api-demo.herokuapp.com/api/locations{?page,per_page}",
+  "location_url": "https://ohana-api-demo.herokuapp.com/api/locations/{location}",
+  "location_search_url": "https://ohana-api-demo.herokuapp.com/api/search{?category,email,keyword,language,lat_lng,org_name,radius,service_area,page,per_page}"
 }
 ```
 
