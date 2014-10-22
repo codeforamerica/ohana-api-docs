@@ -45,6 +45,7 @@ includes:
   - patch_service
   - delete_service
   - search
+  - nearby
   - pagination
   - errors
 
