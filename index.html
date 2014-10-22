@@ -2319,7 +2319,7 @@ structured like this:</p>
 <td style="text-align: left">service_areas</td>
 <td style="text-align: left">array of strings</td>
 <td style="text-align: left">optional</td>
-<td style="text-align: left">Cities, Counties, or other geographical area served. The values will typically be validated against a list of service areas defined in a deployment&rsquo;s <a href="https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L132-152">settings.yml</a>.</td>
+<td style="text-align: left">Cities, Counties, or other geographical area served. The values will typically be validated against a list of service areas defined in a deployment&rsquo;s <a href="https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L152-172">settings.yml</a>.</td>
 </tr>
 <tr>
 <td style="text-align: left">status</td>
@@ -2498,7 +2498,7 @@ structured like this:</p>
 <td style="text-align: left">service_areas</td>
 <td style="text-align: left">array of strings</td>
 <td style="text-align: left">optional</td>
-<td style="text-align: left">Cities, Counties, or other geographical area served. The values will typically be validated against a list of service areas defined in a deployment&rsquo;s <a href="https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L132-152">settings.yml</a>.</td>
+<td style="text-align: left">Cities, Counties, or other geographical area served. The values will typically be validated against a list of service areas defined in a deployment&rsquo;s <a href="https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L152-172">settings.yml</a>.</td>
 </tr>
 <tr>
 <td style="text-align: left">status</td>
@@ -2539,6 +2539,173 @@ structured like this:</p>
 
 <p><aside class="warning">All DELETE requests require a valid token passed via the
 <code class="prettyprint">X-Api-Token</code> HTTP header</aside></p>
+
+          <h1 id='search-locations'>Search Locations</h1><h2 id='get-locations-that-match-certain-criteria-'>Get locations that match certain criteria.</h2><pre class="highlight ruby"><span class="c1"># Provide an API Endpoint</span>
+<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
+  <span class="n">c</span><span class="p">.</span><span class="nf">api_endpoint</span> <span class="o">=</span> <span class="s1">'https://ohana-api-demo.herokuapp.com/api'</span>
+<span class="k">end</span>
+
+<span class="c1"># Fetch all locations within 2 miles of ZIP code 94103</span>
+<span class="no">Ohanakapa</span><span class="p">.</span><span class="nf">search</span><span class="p">(</span><span class="s1">'search'</span><span class="p">,</span> <span class="p">{</span> <span class="ss">location: </span><span class="s1">'94103'</span><span class="p">,</span> <span class="ss">radius: </span><span class="mi">2</span> <span class="p">})</span>
+</pre>
+<pre class="highlight shell">curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api/search?location=94103&amp;radius=2"</span> -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
+</pre>
+
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">31</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"admin_emails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"coordinates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="mf">-122.4456187</span><span class="p">,</span><span class="w">
+      </span><span class="mf">37.7517064</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Testing adding a new location"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"latitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">37.7517064</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"longitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">-122.4456187</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"New location test"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"short_desc"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"new-location-test"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-09-10T08:21:14.853-07:00"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"contacts_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/contacts"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"services_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/services"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">28</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"street_1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1290 Ridder Park Drive"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"street_2"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"San Francisco"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"postal_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94103"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"organization"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test description"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Admin Test Org"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"admin-test-org"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"id"</span><span class="p">:</span><span class="mi">43</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"department"</span><span class="p">:</span><span class="s2">"Information"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"extension"</span><span class="p">:</span><span class="s2">"123"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"number"</span><span class="p">:</span><span class="s2">"650 372-6200"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"number_type"</span><span class="p">:</span><span class="s2">"voice"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"vanity_number"</span><span class="p">:</span><span class="s2">"222-555-INFO"</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"id"</span><span class="p">:</span><span class="mi">44</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"department"</span><span class="p">:</span><span class="s2">"Reservations"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"extension"</span><span class="p">:</span><span class="err">null</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"number"</span><span class="p">:</span><span class="s2">"650 627-8244"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"number_type"</span><span class="p">:</span><span class="s2">"fax"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"vanity_number"</span><span class="p">:</span><span class="err">null</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"admin_emails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"coordinates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="mf">-122.4136494</span><span class="p">,</span><span class="w">
+      </span><span class="mf">37.7756408</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Location with no service"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"latitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">37.7756408</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"longitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">-122.4136494</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Location with no service"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"short_desc"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"location-with-no-service"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-09-10T08:21:14.848-07:00"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"contacts_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service/contacts"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"services_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service/services"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">27</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"street_1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"155 9th St"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"street_2"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"San Francisco"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"postal_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"94103"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"organization"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test description"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Admin Test Org"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"admin-test-org"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></pre>
+
+<p>This endpoint retrieves all locations that match the criteria based on the parameters below. Multiple parameters can be used at the same time, separated by an ampersand (<code class="prettyprint">&amp;</code>).</p>
+<h3 id='http-request'>HTTP Request</h3>
+<p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api/search{?category,email,keyword,language,lat_lng,org_name,radius,service_area}</code></p>
+<h3 id='url-query-parameters'>URL Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>category</td>
+<td>The name of the Service category. By default, Ohana API uses the <a href="http://openeligibility.org/">Open Eligibility</a> taxonomy for Human Services. The parameter must be spelled exactly as in the Open Eligibility taxonomy, including capitalizations and spaces. Some deployments might choose to use their own taxonomy. In that case, refer to their documentation.</td>
+</tr>
+<tr>
+<td>email</td>
+<td>This is only useful if you&rsquo;re building an external admin interface. It allows you to determine which locations the user that just signed in has access to. When you pass in an email to the API, it first checks to see if the domain name portion of the email matches one of the <a href="https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L29-54">generic domains</a> defined in settings.yml. If it does, then it finds locations whose <code class="prettyprint">admin_emails</code> matches the user&rsquo;s email or whose <code class="prettyprint">emails</code> matches the email. Otherwise, if it doesn&rsquo;t match a generic domain, then it will find locations whose <code class="prettyprint">admin_emails</code> matches the email, or whose <code class="prettyprint">urls</code> matches the domain name, or whose <code class="prettyprint">emails</code> matches the domain name. Read the <a href="https://github.com/codeforamerica/ohana-api/blob/master/app/models/concerns/search.rb#L23-40">source code</a> for more details.</td>
+</tr>
+<tr>
+<td>keyword</td>
+<td>You can pass in one or more words, and the API will look for the occurrence of those words in the following fields: the organization&rsquo;s name, the location&rsquo;s name, the location&rsquo;s description, the service&rsquo;s name, the service&rsquo;s description, the service&rsquo;s keywords, and the service&rsquo;s categories. If more than one word is passed, the API will return matches where <strong>all</strong> of the words are present (but not necessarily as a phrase). Matches within the location&rsquo;s description, the service&rsquo;s description, and the service&rsquo;s category names are ranked higher than matches in the other fields. This full text search is performed via a Postgres <a href="https://github.com/codeforamerica/ohana-api/blob/master/db/migrate/20140508194831_update_search_vector_migration.rb">tsvector column</a> and the <a href="https://github.com/codeforamerica/ohana-api/blob/master/app/models/concerns/search.rb#L42-53">pg_search</a> gem.</td>
+</tr>
+<tr>
+<td>language</td>
+<td>Returns locations whose <code class="prettyprint">languages</code> field matches the parameter. You can either pass in one language as a String or multiple languages as an Array. For example: <code class="prettyprint">https://ohana-api-demo.herokuapp.com/api/search?language[]=Spanish&amp;language[]=French</code>. This will return locations whose <code class="prettyprint">languages</code> field contains either <code class="prettyprint">Spanish</code> or <code class="prettyprint">French</code>.</td>
+</tr>
+<tr>
+<td>lat_lng</td>
+<td>Find locations near a specific latitude and longitude. This parameter must be a comma-delimited lat,long pair of floats. For example: <code class="prettyprint">https://ohana-api-demo.herokuapp.com/api/search?lat_lng=37.477227,-122.213221</code>. By default, this will find locations within a 5-mile radius of those coordinates. To use a different radius, pass in the radius parameter (see description below).</td>
+</tr>
+<tr>
+<td>org_name</td>
+<td>Find locations that belong to an Organization whose name matches the parameter. If more than one word is passed, the API will return matches where <strong>all</strong> of the words are present (but not necessarily as a phrase).</td>
+</tr>
+<tr>
+<td>radius</td>
+<td>Use this parameter in conjunction with the <code class="prettyprint">location</code> or <code class="prettyprint">lat_lng</code> parameter to define the search area in miles. The default value is 5, the minimum value is 0.1, and the maximum value is 50.</td>
+</tr>
+<tr>
+<td>service_area</td>
+<td>Find locations whose services are available in a particular service area. For example: <code class="prettyprint">https://ohana-api-demo.herokuapp.com/api/search?service_area=belmont</code>. The list of valid service areas will usually be defined in a deployment&rsquo;s <a href="https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L152-172">settings.yml</a>.</td>
+</tr>
+<tr>
+<td>page</td>
+<td>The particular page of results. Default is 1.</td>
+</tr>
+<tr>
+<td>per_page</td>
+<td>Amount of locations to return per page, up to 100. Default is 30.</td>
+</tr>
+</tbody></table>
 
           <h1 id='pagination'>Pagination</h1>
 <p>Requests that return multiple items will be paginated to 30 items by default. You can specify further pages with the <code class="prettyprint">?page</code> parameter. For some resources, you can also set a custom page size up to 100 with the <code class="prettyprint">?per_page</code> parameter.</p>
