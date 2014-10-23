@@ -134,6 +134,12 @@ or
 
 `GET https://ohana-api-demo.herokuapp.com/api/locations/redwood-shores-branch`
 
+For clients that display information about a particular Location, it
+might make sense to display a warning or other message if the Location
+currently doesn’t have any active services. You can determine if that’s
+the case by checking if the Location’s JSON contains an `active`
+attribute set to `false`.
+
 ### URL Parameters
 
 Parameter | Description

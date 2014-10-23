@@ -22,6 +22,7 @@ curl "https://ohana-api-demo.herokuapp.com/api/search?location=94103&radius=2" -
 [
   {
     "id": 22,
+    "active": true,
     "admin_emails": [ ],
     "coordinates": [
       -122.4456187,
@@ -79,6 +80,7 @@ curl "https://ohana-api-demo.herokuapp.com/api/search?location=94103&radius=2" -
   },
   {
     "id": 15,
+    "active": true,
     "admin_emails": [ ],
     "coordinates": [
       -122.4136494,
@@ -138,5 +140,6 @@ lat_lng | Find locations near a specific latitude and longitude. This parameter 
 org_name | Find locations that belong to an Organization whose name matches the parameter. If more than one word is passed, the API will return matches where **all** of the words are present (but not necessarily as a phrase).
 radius | Use this parameter in conjunction with the `location` or `lat_lng` parameter to define the search area in miles. The default value is 5, the minimum value is 0.1, and the maximum value is 50.
 service_area | Find locations whose services are available in a particular service area. For example: `https://ohana-api-demo.herokuapp.com/api/search?service_area=belmont`. The list of valid service areas will usually be defined in a deployment's [settings.yml](https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L152-172).
+status | If set to `active`, it finds Locations that have at least one active Service. If set to `inactive`, it finds Locations that don't have any active Services.
 page | The particular page of results. Default is 1.
 per_page | Amount of locations to return per page, up to 100. Default is 30.
