@@ -224,7 +224,7 @@ Access-Control-Allow-Credentials: <span class="nb">true
   </span><span class="s2">"organization_locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/{organization}/locations{?page,per_page}"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations{?page,per_page}"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"location_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/{location}"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"location_search_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/search{?category,email,keyword,language,lat_lng,org_name,radius,service_area,page,per_page}"</span><span class="w">
+  </span><span class="s2">"location_search_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/search{?category,email,keyword,language,lat_lng,org_name,radius,service_area,status,page,per_page}"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
@@ -952,6 +952,12 @@ structured like this:</p>
 <p>or</p>
 
 <p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api/locations/redwood-shores-branch</code></p>
+
+<p>For clients that display information about a particular Location, it
+might make sense to display a warning or other message if the Location
+currently doesn’t have any active services. You can determine if that’s
+the case by checking if the Location’s JSON contains an <code class="prettyprint">active</code>
+attribute set to <code class="prettyprint">false</code>.</p>
 <h3 id='url-parameters'>URL Parameters</h3>
 <table><thead>
 <tr>
@@ -2562,6 +2568,7 @@ structured like this:</p>
 <pre class="highlight json"><span class="p">[</span><span class="w">
   </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">22</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
     </span><span class="s2">"admin_emails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
     </span><span class="s2">"coordinates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
       </span><span class="mf">-122.4456187</span><span class="p">,</span><span class="w">
@@ -2619,6 +2626,7 @@ structured like this:</p>
   </span><span class="p">},</span><span class="w">
   </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
     </span><span class="s2">"admin_emails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
     </span><span class="s2">"coordinates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
       </span><span class="mf">-122.4136494</span><span class="p">,</span><span class="w">
@@ -2701,6 +2709,10 @@ structured like this:</p>
 <tr>
 <td>service_area</td>
 <td>Find locations whose services are available in a particular service area. For example: <code class="prettyprint">https://ohana-api-demo.herokuapp.com/api/search?service_area=belmont</code>. The list of valid service areas will usually be defined in a deployment&rsquo;s <a href="https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L152-172">settings.yml</a>.</td>
+</tr>
+<tr>
+<td>status</td>
+<td>If set to <code class="prettyprint">active</code>, it finds Locations that have at least one active Service. If set to <code class="prettyprint">inactive</code>, it finds Locations that don&rsquo;t have any active Services.</td>
 </tr>
 <tr>
 <td>page</td>
