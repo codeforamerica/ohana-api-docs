@@ -99,7 +99,69 @@ curl -X PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1" -d '{"name"
       "urls": [ ],
       "wait": "No wait.",
       "updated_at": "2014-04-16T19:51:28.610-07:00",
-      "categories": [ ]
+      "categories": [ ],
+      "regular_schedules":[],
+      "holiday_schedules":[]
+    }
+  ],
+  "regular_schedules":[
+    {
+      "weekday":"Monday",
+      "opens_at":"2000-01-01T08:00:00.000Z",
+      "closes_at":"2000-01-01T17:00:00.000Z"
+    },
+    {
+      "weekday":"Tuesday",
+      "opens_at":"2000-01-01T08:00:00.000Z",
+      "closes_at":"2000-01-01T17:00:00.000Z"
+    },
+    {
+      "weekday":"Wednesday",
+      "opens_at":"2000-01-01T08:00:00.000Z",
+      "closes_at":"2000-01-01T17:00:00.000Z"
+    },
+    {
+      "weekday":"Thursday",
+      "opens_at":"2000-01-01T08:00:00.000Z",
+      "closes_at":"2000-01-01T17:00:00.000Z"
+    },
+    {
+      "weekday":"Friday",
+      "opens_at":"2000-01-01T08:00:00.000Z",
+      "closes_at":"2000-01-01T17:00:00.000Z"
+    },
+    {
+      "weekday":"Saturday",
+      "opens_at":"2000-01-01T10:00:00.000Z",
+      "closes_at":"2000-01-01T18:00:00.000Z"
+    },
+    {
+      "weekday":"Sunday",
+      "opens_at":"2000-01-01T11:00:00.000Z",
+      "closes_at":"2000-01-01T17:00:00.000Z"
+    }
+  ],
+  "holiday_schedules":[
+    {
+      "closed":true,
+      "start_date":"0001-01-01",
+      "end_date":"0001-01-01",
+      "opens_at":null,
+      "closes_at":null
+    },
+    {
+      "closed":false,
+      "start_date":"0001-12-24",
+      "end_date":"0001-12-24",
+      "opens_at":"2000-01-01T10:00:00.000Z",
+      "closes_at":"2000-01-01T16:00:00.000Z"
+    },
+    {
+      "closed":true,
+      "start_date":"0001-06-01",
+      "end_date":"0001-09-01",
+      "opens_at":null,
+      "closes_at":null
     }
   ],
   "organization": {

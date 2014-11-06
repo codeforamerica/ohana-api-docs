@@ -53,7 +53,9 @@ curl -X PATCH "https://ohana-api-demo.herokuapp.com/api/locations/22/services/22
   "website": "http://www.example.com",
   "wait": "No wait to 2 weeks",
   "updated_at": "2014-04-18T12:49:47.791-07:00",
-  "categories": []
+  "categories": [],
+  "regular_schedules":[],
+  "holiday_schedules":[]
 }
 ```
 
