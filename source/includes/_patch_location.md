@@ -104,15 +104,18 @@ curl -X PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1" -d '{"name"
   ],
   "organization": {
     "id": 8,
-      "alternate_name": null,
-      "date_incorporated": null,
-      "description": "Test description",
-      "email": null,
-      "name": "Admin Test Org",
-      "slug": "admin-test-org",
-      "website": null,
-      "url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org",
-      "locations_url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"
+    "accreditations": [],
+    "alternate_name": null,
+    "date_incorporated": null,
+    "description": "Test description",
+    "email": null,
+    "funding_sources": [],
+    "licenses": [],
+    "name": "Admin Test Org",
+    "slug": "admin-test-org",
+    "website": null,
+    "url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org",
+    "locations_url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"
   }
 }
 ```

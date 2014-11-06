@@ -22,10 +22,13 @@ curl "https://ohana-api-demo.herokuapp.com/api/organizations/1"
 ```json
 {
   "id": 1,
+  "accreditations": [],
   "alternate_name": null,
   "date_incorporated": null,
   "description":"Peninsula Family Service strengthens the community by providing children, families, and older adults the support and tools to realize their full potential and lead healthy, stable lives.",
   "email": null,
+  "funding_sources": [],
+  "licenses": [],
   "name": "Peninsula Family Service",
   "slug": "peninsula-family-service",
   "website": null,

@@ -111,10 +111,13 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1"
   ],
   "organization": {
     "id": 4,
+    "accreditations": [],
     "alternate_name": null,
     "date_incorporated": null,
     "description": "Redwood City Public Library",
     "email": null,
+    "funding_sources": [],
+    "licenses": [],
     "name": "Redwood City Public Library",
     "slug": "redwood-city-public-library",
     "website": null,

@@ -22,10 +22,13 @@ curl "https://ohana-api-demo.herokuapp.com/api/organizations" -H "User-Agent: My
 [
   {
     "id": 7,
+    "accreditations": [],
     "alternate_name": null,
     "date_incorporated": null,
     "description": "An organization created for testing purposes.",
     "email": null,
+    "funding_sources": [],
+    "licenses": [],
     "name": "Admin Test Org",
     "slug": "admin-test-org",
     "website": null,
@@ -34,10 +37,13 @@ curl "https://ohana-api-demo.herokuapp.com/api/organizations" -H "User-Agent: My
   },
   {
     "id": 6,
+    "accreditations": [],
     "alternate_name": null,
     "date_incorporated": null,
     "description": "An organization created for testing purposes.",
     "email": null,
+    "funding_sources": [],
+    "licenses": [],
     "name": "Fake Org",
     "slug": "fake-org",
     "website": null,

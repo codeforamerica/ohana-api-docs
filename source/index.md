@@ -18,7 +18,7 @@ includes:
   - root
   - organizations
   - get_organization
-  - post_organization
+  - create_organization
   - patch_organization
   - delete_organization
   - get_organization_locations
