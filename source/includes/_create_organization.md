@@ -26,7 +26,9 @@ curl -X POST "https://ohana-api-demo.herokuapp.com/api/organizations -d '{"name"
   "slug": "new-organization",
   "website": null,
   "url": "https://ohana-api-demo.herokuapp.com/api/organizations/new-organization",
-  "locations_url": "https://ohana-api-demo.herokuapp.com/api/organizations/new-organization/locations"
+  "locations_url": "https://ohana-api-demo.herokuapp.com/api/organizations/new-organization/locations",
+  "contacts": [],
+  "phones": []
 }
 ```
 

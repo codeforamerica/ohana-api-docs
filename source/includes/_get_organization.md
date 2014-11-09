@@ -33,7 +33,44 @@ curl "https://ohana-api-demo.herokuapp.com/api/organizations/1"
   "slug": "peninsula-family-service",
   "website": null,
   "url": "http://ohana-api-demo.herokuapp.com/api/organizations/peninsula-family-service",
-  "locations_url": "http://ohana-api-demo.herokuapp.com/api/organizations/peninsula-family-service/locations"
+  "locations_url": "http://ohana-api-demo.herokuapp.com/api/organizations/peninsula-family-service/locations",
+  "contacts":[
+    {
+      "department":"Operations",
+      "email":"e.feeney@foobar.org",
+      "id":32,
+      "name":"Elizabeth Feeney",
+      "title":"CEO",
+      "phones":[
+        {
+          "id":54,
+          "department":"Operations",
+          "extension":null,
+          "number":"703-444-1234",
+          "number_type":"fax",
+          "vanity_number":null
+        },
+        {
+          "id":55,
+          "department":"Operations",
+          "extension":"101",
+          "number":"650-555-1212",
+          "number_type":"voice",
+          "vanity_number":null
+        }
+      ]
+    }
+  ],
+  "phones":[
+    {
+      "id":53,
+      "department":"Operations",
+      "extension":"101",
+      "number":"123-456-7890",
+      "number_type":"voice",
+      "vanity_number":null
+    }
+  ]
 }
 ```
 

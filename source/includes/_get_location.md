@@ -22,6 +22,7 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1"
 ```json
 {
   "id": 14,
+  "active": true,
   "accessibility": [ ],
   "admin_emails": [ ],
   "alternate_name": null,
@@ -30,8 +31,7 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1"
     37.5304228
   ],
   "description": "Provides general reading materials, including large-type books, videos, music cassettes and CDs, and books on tape. Offers children's programs and a Summer Reading Club. Meeting room is available to nonprofit groups. Participates in the Peninsula Library System.",
-  "emails": [ ],
-  "hours": null,
+  "email": null,
   "languages": [ ],
   "latitude": 37.5304228,
   "longitude": -122.2586432,
@@ -39,10 +39,8 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1"
   "short_desc": "Provides general reading materials and reference services.",
   "slug": "redwood-shores-branch",
   "transportation": null,
+  "website": "http://www.redwoodcity.org/library",
   "updated_at": "2014-09-09T07:54:08.641-07:00",
-  "urls": [
-    "http://www.redwoodcity.org/library"
-  ],
   "url": "https://ohana-api-demo.herokuapp.com/api/locations/redwood-shores-branch",
   "address": {
     "id": 14,
@@ -84,9 +82,12 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1"
   "services": [
     {
       "id": 15,
+      "accepted_payments": [],
+      "alternate_name": null,
       "audience": null,
       "description": null,
       "eligibility": "Resident of California to obtain a library card",
+      "email": null,
       "fees": "None.",
       "funding_sources": [
         "City"
@@ -98,15 +99,19 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1"
         "Libraries",
         "Public Libraries"
       ],
+      "languages": [],
       "name": null,
+      "required_documents": [],
       "service_areas": [
         "San Mateo County"
       ],
-      "short_desc": null,
-      "urls": [ ],
+      "status": "active",
+      "website": null,
       "wait": "No wait.",
       "updated_at": "2014-04-16T19:51:28.610-07:00",
-      "categories": [ ],
+      "categories": [],
+      "contacts": [],
+      "phones": [],
       "regular_schedules":[
         {
           "weekday":"Monday",
@@ -189,18 +194,10 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1"
   ],
   "organization": {
     "id": 4,
-    "accreditations": [],
     "alternate_name": null,
-    "date_incorporated": null,
-    "description": "Redwood City Public Library",
-    "email": null,
-    "funding_sources": [],
-    "licenses": [],
     "name": "Redwood City Public Library",
     "slug": "redwood-city-public-library",
-    "website": null,
     "url": "https://ohana-api-demo.herokuapp.com/api/organizations/redwood-city-public-library",
-    "locations_url": "https://ohana-api-demo.herokuapp.com/api/organizations/redwood-city-public-library/locations"
   }
 }
 ```

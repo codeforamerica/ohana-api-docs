@@ -22,6 +22,7 @@ curl "https://ohana-api-demo.herokuapp.com/api/organizations/1/locations" -H "Us
 [
   {
     "id": 31,
+    "active": true,
     "admin_emails": [ ],
     "coordinates": [
       -122.4456187,
@@ -33,8 +34,8 @@ curl "https://ohana-api-demo.herokuapp.com/api/organizations/1/locations" -H "Us
     "name": "New location test",
     "short_desc": null,
     "slug": "new-location-test",
+    "website": null,
     "updated_at": "2014-09-10T08:21:14.853-07:00",
-    "urls": [ ],
     "contacts_url": "https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/contacts",
     "services_url": "https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/services",
     "url": "https://ohana-api-demo.herokuapp.com/api/locations/new-location-test",
@@ -65,6 +66,7 @@ curl "https://ohana-api-demo.herokuapp.com/api/organizations/1/locations" -H "Us
   },
   {
     "id": 30,
+    "active": true,
     "admin_emails": [ ],
     "coordinates": [
       -122.4136494,
@@ -76,8 +78,8 @@ curl "https://ohana-api-demo.herokuapp.com/api/organizations/1/locations" -H "Us
     "name": "Location with no service",
     "short_desc": null,
     "slug": "location-with-no-service",
+    "website": null,
     "updated_at": "2014-09-10T08:21:14.848-07:00",
-    "urls": [ ],
     "contacts_url": "https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service/contacts",
     "services_url": "https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service/services",
     "url": "https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service",

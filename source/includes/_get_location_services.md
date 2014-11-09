@@ -61,6 +61,8 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1/services" -H "User-Ag
     "wait": "No wait to 2 weeks",
     "updated_at": "2014-04-18T12:49:47.791-07:00",
     "categories": [],
+    "contacts": [],
+    "phones": [],
     "regular_schedules":[],
     "holiday_schedules":[]
   },
@@ -90,6 +92,8 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1/services" -H "User-Ag
     "website": "http://www.example.com",
     "wait": "No wait to 2 weeks",
     "categories": [],
+    "contacts": [],
+    "phones": [],
     "regular_schedules":[],
     "holiday_schedules":[]
   }

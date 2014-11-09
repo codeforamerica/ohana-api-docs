@@ -33,7 +33,9 @@ curl "https://ohana-api-demo.herokuapp.com/api/organizations" -H "User-Agent: My
     "slug": "admin-test-org",
     "website": null,
     "url": "http://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org",
-    "locations_url": "http://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"
+    "locations_url": "http://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations",
+    "contacts": [],
+    "phones": []
   },
   {
     "id": 6,
@@ -48,7 +50,9 @@ curl "https://ohana-api-demo.herokuapp.com/api/organizations" -H "User-Agent: My
     "slug": "fake-org",
     "website": null,
     "url": "http://ohana-api-demo.herokuapp.com/api/organizations/fake-org",
-    "locations_url": "http://ohana-api-demo.herokuapp.com/api/organizations/fake-org/locations"
+    "locations_url": "http://ohana-api-demo.herokuapp.com/api/organizations/fake-org/locations",
+    "contacts": [],
+    "phones": []
   }
 ]
 ```

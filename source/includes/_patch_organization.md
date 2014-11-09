@@ -26,7 +26,9 @@ curl -X PATCH "https://ohana-api-demo.herokuapp.com/api/organizations/1/address/
   "slug": "updated-name",
   "website": null,
   "url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org",
-  "locations_url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"
+  "locations_url": "https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations",
+  "contacts": [],
+  "phones": []
 }
 ```
 
