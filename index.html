@@ -73,13 +73,13 @@
 <h2 id='summary-representations'>Summary Representations</h2>
 <p>When you fetch a list of locations (via either the <code class="prettyprint">locations</code> or the <code class="prettyprint">search</code> endpoint), the response includes a subset of the attributes for that location. This is the “summary” representation of the resource. Some attributes are computationally expensive for the API to provide. For performance reasons, the summary representation excludes those attributes. To obtain those attributes, fetch the “detailed” representation.</p>
 
-<p>The attributes that are excluded from the <code class="prettyprint">/search</code> and <code class="prettyprint">/locations</code> endpoints are <code class="prettyprint">accessibility</code>, <code class="prettyprint">emails</code>, <code class="prettyprint">hours</code>, <code class="prettyprint">languages</code>, and <code class="prettyprint">transportation</code>. The associated <code class="prettyprint">contacts</code> and <code class="prettyprint">services</code> are also excluded, but the URLs to those representations are provided as <code class="prettyprint">contacts_url</code> and <code class="prettyprint">services_url</code>.</p>
+<p>The location attributes that are excluded from the <code class="prettyprint">/search</code> and <code class="prettyprint">/locations</code> endpoints are <code class="prettyprint">accessibility</code>, <code class="prettyprint">email</code>, <code class="prettyprint">languages</code>, <code class="prettyprint">transportation</code>, <code class="prettyprint">mail_address</code>, <code class="prettyprint">regular_schedules</code>, and <code class="prettyprint">holiday_schedules</code>. The associated <code class="prettyprint">contacts</code> and <code class="prettyprint">services</code> are also excluded, but the URLs to those representations are provided as <code class="prettyprint">contacts_url</code> and <code class="prettyprint">services_url</code>. The <code class="prettyprint">organization</code> association is also summarized to exclude <code class="prettyprint">contacts</code> and <code class="prettyprint">phones</code>.</p>
 
 <p>The attributes provided in the summary representation are defined in the <a href="https://github.com/codeforamerica/ohana-api/blob/master/app/serializers/locations_serializer.rb">Locations Serializer</a>.</p>
 
 <p>The <a href="#nearby">nearby</a> endpoint returns an even smaller JSON representation consisting of the following attributes: <code class="prettyprint">id</code>, <code class="prettyprint">alternate_name</code>, <code class="prettyprint">latitude</code>, <code class="prettyprint">longitude</code>, <code class="prettyprint">name</code>, <code class="prettyprint">slug</code>, <code class="prettyprint">address</code>.</p>
 <h2 id='detailed-representations'>Detailed Representations</h2>
-<p>When you fetch an individual resource, the response typically includes all attributes for that resource. This is the “detailed” representation of the resource.</p>
+<p>When you fetch an individual resource, the response typically includes all attributes for that resource. This is the “detailed” representation of the resource. One exception is when fetching an individual location. All of the location&rsquo;s attributes are included in the response, but the <code class="prettyprint">organization</code> association is summarized to only include <code class="prettyprint">id</code>, <code class="prettyprint">alternate_name</code>, <code class="prettyprint">name</code>, <code class="prettyprint">slug</code>, and <code class="prettyprint">url</code>.</p>
 
           <h1 id='making-requests'>Making Requests</h1><pre class="highlight shell"><span class="c"># In your shell, you can just pass the correct header with each request</span>
 curl <span class="s2">"https://ohana-api-demo.herokuapp.com/api"</span> -H <span class="s2">"User-Agent: MyClient/1.0.0"</span>
@@ -271,7 +271,9 @@ Access-Control-Allow-Credentials: <span class="nb">true
     </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"admin-test-org"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"</span><span class="w">
+    </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+    </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
@@ -286,7 +288,9 @@ Access-Control-Allow-Credentials: <span class="nb">true
     </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fake-org"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/fake-org"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/fake-org/locations"</span><span class="w">
+    </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/fake-org/locations"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+    </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 </span></pre>
@@ -349,7 +353,44 @@ structured like this:</p>
   </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"peninsula-family-service"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
   </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/peninsula-family-service"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/peninsula-family-service/locations"</span><span class="w">
+  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://ohana-api-demo.herokuapp.com/api/organizations/peninsula-family-service/locations"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"contacts"</span><span class="p">:[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"department"</span><span class="p">:</span><span class="s2">"Operations"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"email"</span><span class="p">:</span><span class="s2">"e.feeney@foobar.org"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="mi">32</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"Elizabeth Feeney"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"title"</span><span class="p">:</span><span class="s2">"CEO"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"phones"</span><span class="p">:[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="s2">"id"</span><span class="p">:</span><span class="mi">54</span><span class="p">,</span><span class="w">
+          </span><span class="s2">"department"</span><span class="p">:</span><span class="s2">"Operations"</span><span class="p">,</span><span class="w">
+          </span><span class="s2">"extension"</span><span class="p">:</span><span class="err">null</span><span class="p">,</span><span class="w">
+          </span><span class="s2">"number"</span><span class="p">:</span><span class="s2">"703-444-1234"</span><span class="p">,</span><span class="w">
+          </span><span class="s2">"number_type"</span><span class="p">:</span><span class="s2">"fax"</span><span class="p">,</span><span class="w">
+          </span><span class="s2">"vanity_number"</span><span class="p">:</span><span class="err">null</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="s2">"id"</span><span class="p">:</span><span class="mi">55</span><span class="p">,</span><span class="w">
+          </span><span class="s2">"department"</span><span class="p">:</span><span class="s2">"Operations"</span><span class="p">,</span><span class="w">
+          </span><span class="s2">"extension"</span><span class="p">:</span><span class="s2">"101"</span><span class="p">,</span><span class="w">
+          </span><span class="s2">"number"</span><span class="p">:</span><span class="s2">"650-555-1212"</span><span class="p">,</span><span class="w">
+          </span><span class="s2">"number_type"</span><span class="p">:</span><span class="s2">"voice"</span><span class="p">,</span><span class="w">
+          </span><span class="s2">"vanity_number"</span><span class="p">:</span><span class="err">null</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="s2">"phones"</span><span class="p">:[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="mi">53</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"department"</span><span class="p">:</span><span class="s2">"Operations"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"extension"</span><span class="p">:</span><span class="s2">"101"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"number"</span><span class="p">:</span><span class="s2">"123-456-7890"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"number_type"</span><span class="p">:</span><span class="s2">"voice"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"vanity_number"</span><span class="p">:</span><span class="err">null</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
@@ -396,7 +437,9 @@ structured like this:</p>
   </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"new-organization"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
   </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/new-organization"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/new-organization/locations"</span><span class="w">
+  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/new-organization/locations"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+  </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
@@ -512,7 +555,9 @@ structured like this:</p>
   </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"updated-name"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
   </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"</span><span class="w">
+  </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+  </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
@@ -639,6 +684,7 @@ structured like this:</p>
 <pre class="highlight json"><span class="p">[</span><span class="w">
   </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">31</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
     </span><span class="s2">"admin_emails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
     </span><span class="s2">"coordinates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
       </span><span class="mf">-122.4456187</span><span class="p">,</span><span class="w">
@@ -650,8 +696,8 @@ structured like this:</p>
     </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"New location test"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"short_desc"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"new-location-test"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-09-10T08:21:14.853-07:00"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
     </span><span class="s2">"contacts_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/contacts"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"services_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/services"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test"</span><span class="p">,</span><span class="w">
@@ -682,6 +728,7 @@ structured like this:</p>
   </span><span class="p">},</span><span class="w">
   </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
     </span><span class="s2">"admin_emails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
     </span><span class="s2">"coordinates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
       </span><span class="mf">-122.4136494</span><span class="p">,</span><span class="w">
@@ -693,8 +740,8 @@ structured like this:</p>
     </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Location with no service"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"short_desc"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"location-with-no-service"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-09-10T08:21:14.848-07:00"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
     </span><span class="s2">"contacts_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service/contacts"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"services_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service/services"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service"</span><span class="p">,</span><span class="w">
@@ -783,7 +830,7 @@ the appropriate endpoint. All known API deployments are listed in the
     </span><span class="s2">"short_desc"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"new-location-test"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-09-10T08:21:14.853-07:00"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"contacts_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/contacts"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"services_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/services"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test"</span><span class="p">,</span><span class="w">
@@ -826,7 +873,7 @@ the appropriate endpoint. All known API deployments are listed in the
     </span><span class="s2">"short_desc"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"location-with-no-service"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-09-10T08:21:14.848-07:00"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"contacts_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service/contacts"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"faxes_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service/faxes"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"services_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service/services"</span><span class="p">,</span><span class="w">
@@ -906,6 +953,7 @@ structured like this:</p>
 </blockquote>
 <pre class="highlight json"><span class="p">{</span><span class="w">
   </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
   </span><span class="s2">"accessibility"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
   </span><span class="s2">"admin_emails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
   </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
@@ -914,8 +962,7 @@ structured like this:</p>
     </span><span class="mf">37.5304228</span><span class="w">
   </span><span class="p">],</span><span class="w">
   </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Provides general reading materials, including large-type books, videos, music cassettes and CDs, and books on tape. Offers children's programs and a Summer Reading Club. Meeting room is available to nonprofit groups. Participates in the Peninsula Library System."</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"emails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
-  </span><span class="s2">"hours"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
   </span><span class="s2">"languages"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
   </span><span class="s2">"latitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">37.5304228</span><span class="p">,</span><span class="w">
   </span><span class="s2">"longitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">-122.2586432</span><span class="p">,</span><span class="w">
@@ -923,10 +970,8 @@ structured like this:</p>
   </span><span class="s2">"short_desc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Provides general reading materials and reference services."</span><span class="p">,</span><span class="w">
   </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"redwood-shores-branch"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"transportation"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://www.redwoodcity.org/library"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-09-09T07:54:08.641-07:00"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-    </span><span class="s2">"http://www.redwoodcity.org/library"</span><span class="w">
-  </span><span class="p">],</span><span class="w">
   </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/redwood-shores-branch"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
@@ -968,9 +1013,12 @@ structured like this:</p>
   </span><span class="s2">"services"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
       </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"accepted_payments"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+      </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"audience"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"eligibility"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Resident of California to obtain a library card"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"fees"</span><span class="p">:</span><span class="w"> </span><span class="s2">"None."</span><span class="p">,</span><span class="w">
       </span><span class="s2">"funding_sources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
         </span><span class="s2">"City"</span><span class="w">
@@ -982,15 +1030,19 @@ structured like this:</p>
         </span><span class="s2">"Libraries"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"Public Libraries"</span><span class="w">
       </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"languages"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
       </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"required_documents"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
       </span><span class="s2">"service_areas"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
         </span><span class="s2">"San Mateo County"</span><span class="w">
       </span><span class="p">],</span><span class="w">
-      </span><span class="s2">"short_desc"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"wait"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait."</span><span class="p">,</span><span class="w">
       </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-04-16T19:51:28.610-07:00"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+      </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+      </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
       </span><span class="s2">"regular_schedules"</span><span class="p">:[</span><span class="w">
         </span><span class="p">{</span><span class="w">
           </span><span class="s2">"weekday"</span><span class="p">:</span><span class="s2">"Monday"</span><span class="p">,</span><span class="w">
@@ -1073,19 +1125,11 @@ structured like this:</p>
   </span><span class="p">],</span><span class="w">
   </span><span class="s2">"organization"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"accreditations"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
     </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Redwood City Public Library"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"funding_sources"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
-    </span><span class="s2">"licenses"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
     </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Redwood City Public Library"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"redwood-city-public-library"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/redwood-city-public-library"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/redwood-city-public-library/locations"</span><span class="w">
-  </span><span class="p">}</span><span class="w">
+  </span><span class="err">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
@@ -1194,16 +1238,16 @@ structured like this:</p>
 <td>Description of services provided at the location</td>
 </tr>
 <tr>
-<td>emails</td>
-<td>array of strings</td>
-<td>optional</td>
-<td>General Email addresses for location. Emails that belong to contacts should go in the Contact object.</td>
-</tr>
-<tr>
-<td>hours</td>
+<td>email</td>
 <td>string</td>
 <td>optional</td>
-<td>Hours of operation for the location</td>
+<td>General Email address for location. Emails that belong to contacts should go in the Contact object.</td>
+</tr>
+<tr>
+<td>holiday_schedules_attributes</td>
+<td>array of objects</td>
+<td>optional</td>
+<td>Holiday hours of operation for the location. See <a href="#holiday-schedules">Holiday Schedules</a> section for the columns in that table.</td>
 </tr>
 <tr>
 <td>languages</td>
@@ -1230,6 +1274,12 @@ structured like this:</p>
 <td>Phone numbers for the location. See the <a href="#phones">Phones</a> section for the columns in that table.</td>
 </tr>
 <tr>
+<td>regular_schedules_attributes</td>
+<td>array of objects</td>
+<td>optional</td>
+<td>Regular hours of operation for the location. See <a href="#regular-schedules">Regular Schedules</a> section for the columns in that table.</td>
+</tr>
+<tr>
 <td>short_desc</td>
 <td>string</td>
 <td>optional</td>
@@ -1242,10 +1292,10 @@ structured like this:</p>
 <td>Public transportation options near the location</td>
 </tr>
 <tr>
-<td>urls</td>
-<td>array of strings</td>
+<td>website</td>
+<td>string</td>
 <td>optional</td>
-<td>The location&rsquo;s website URLs. Must include &ldquo;http://&rdquo; or &ldquo;https://&rdquo;</td>
+<td>The location&rsquo;s website. Must include &ldquo;http://&rdquo; or &ldquo;https://&rdquo;</td>
 </tr>
 <tr>
 <td>virtual</td>
@@ -1270,6 +1320,7 @@ structured like this:</p>
 </blockquote>
 <pre class="highlight json"><span class="p">{</span><span class="w">
   </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
   </span><span class="s2">"accessibility"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
   </span><span class="s2">"admin_emails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
   </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
@@ -1278,8 +1329,7 @@ structured like this:</p>
     </span><span class="mf">37.5304228</span><span class="w">
   </span><span class="p">],</span><span class="w">
   </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Provides general reading materials, including large-type books, videos, music cassettes and CDs, and books on tape. Offers children's programs and a Summer Reading Club. Meeting room is available to nonprofit groups. Participates in the Peninsula Library System."</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"emails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
-  </span><span class="s2">"hours"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
   </span><span class="s2">"languages"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
   </span><span class="s2">"latitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">37.5304228</span><span class="p">,</span><span class="w">
   </span><span class="s2">"longitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">-122.2586432</span><span class="p">,</span><span class="w">
@@ -1287,10 +1337,8 @@ structured like this:</p>
   </span><span class="s2">"short_desc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Provides general reading materials and reference services."</span><span class="p">,</span><span class="w">
   </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"redwood-shores-branch"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"transportation"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://www.redwoodcity.org/library"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-09-09T07:54:08.641-07:00"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-    </span><span class="s2">"http://www.redwoodcity.org/library"</span><span class="w">
-  </span><span class="p">],</span><span class="w">
   </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/redwood-shores-branch"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
@@ -1302,12 +1350,12 @@ structured like this:</p>
   </span><span class="p">},</span><span class="w">
   </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"department"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">22</span><span class="p">,</span><span class="w">
       </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Dave Genesy"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
       </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Library Director"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"department"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="w">
+      </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">],</span><span class="w">
   </span><span class="s2">"mail_address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -1332,9 +1380,12 @@ structured like this:</p>
   </span><span class="s2">"services"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
       </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"accepted_payments"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+      </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"audience"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"eligibility"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Resident of California to obtain a library card"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"fees"</span><span class="p">:</span><span class="w"> </span><span class="s2">"None."</span><span class="p">,</span><span class="w">
       </span><span class="s2">"funding_sources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
         </span><span class="s2">"City"</span><span class="w">
@@ -1346,15 +1397,19 @@ structured like this:</p>
         </span><span class="s2">"Libraries"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"Public Libraries"</span><span class="w">
       </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"languages"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
       </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"required_documents"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
       </span><span class="s2">"service_areas"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
         </span><span class="s2">"San Mateo County"</span><span class="w">
       </span><span class="p">],</span><span class="w">
-      </span><span class="s2">"short_desc"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
       </span><span class="s2">"wait"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait."</span><span class="p">,</span><span class="w">
       </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-04-16T19:51:28.610-07:00"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+      </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
       </span><span class="s2">"regular_schedules"</span><span class="p">:[],</span><span class="w">
       </span><span class="s2">"holiday_schedules"</span><span class="p">:[]</span><span class="w">
     </span><span class="p">}</span><span class="w">
@@ -1421,19 +1476,11 @@ structured like this:</p>
   </span><span class="p">],</span><span class="w">
   </span><span class="s2">"organization"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"accreditations"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
     </span><span class="s2">"alternate_name"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"date_incorporated"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test description"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"funding_sources"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
-    </span><span class="s2">"licenses"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
     </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Admin Test Org"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"admin-test-org"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"locations_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/organizations/admin-test-org/locations"</span><span class="w">
-  </span><span class="p">}</span><span class="w">
+  </span><span class="err">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></pre>
 
@@ -1486,16 +1533,10 @@ structured like this:</p>
 <td style="text-align: left">Description of services provided at the location</td>
 </tr>
 <tr>
-<td style="text-align: left">emails</td>
-<td style="text-align: left">array of strings</td>
-<td style="text-align: left">optional</td>
-<td style="text-align: left">General Email addresses for location. Emails that belong to contacts should go in the Contact object.</td>
-</tr>
-<tr>
-<td style="text-align: left">hours</td>
+<td style="text-align: left">email</td>
 <td style="text-align: left">string</td>
 <td style="text-align: left">optional</td>
-<td style="text-align: left">Hours of operation for the location</td>
+<td style="text-align: left">General Email address for location. Emails that belong to contacts should go in the Contact object.</td>
 </tr>
 <tr>
 <td style="text-align: left">languages</td>
@@ -1522,10 +1563,10 @@ structured like this:</p>
 <td style="text-align: left">Public transportation options near the location</td>
 </tr>
 <tr>
-<td style="text-align: left">urls</td>
-<td style="text-align: left">array of strings</td>
+<td style="text-align: left">website</td>
+<td style="text-align: left">string</td>
 <td style="text-align: left">optional</td>
-<td style="text-align: left">The location&rsquo;s website URLs. Must include &ldquo;http://&rdquo; or &ldquo;https://&rdquo;</td>
+<td style="text-align: left">The location&rsquo;s website. Must include &ldquo;http://&rdquo; or &ldquo;https://&rdquo;</td>
 </tr>
 <tr>
 <td style="text-align: left">virtual</td>
@@ -2326,6 +2367,8 @@ structured like this:</p>
     </span><span class="s2">"wait"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait to 2 weeks"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-04-18T12:49:47.791-07:00"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+    </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+    </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
     </span><span class="s2">"regular_schedules"</span><span class="p">:[],</span><span class="w">
     </span><span class="s2">"holiday_schedules"</span><span class="p">:[]</span><span class="w">
   </span><span class="p">},</span><span class="w">
@@ -2355,6 +2398,8 @@ structured like this:</p>
     </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://www.example.com"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"wait"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait to 2 weeks"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+    </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+    </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
     </span><span class="s2">"regular_schedules"</span><span class="p">:[],</span><span class="w">
     </span><span class="s2">"holiday_schedules"</span><span class="p">:[]</span><span class="w">
   </span><span class="p">}</span><span class="w">
@@ -2621,6 +2666,8 @@ structured like this:</p>
   </span><span class="s2">"wait"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait to 2 weeks"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-04-18T12:49:47.791-07:00"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+  </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+  </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
   </span><span class="s2">"regular_schedules"</span><span class="p">:[],</span><span class="w">
   </span><span class="s2">"holiday_schedules"</span><span class="p">:[]</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -2797,8 +2844,8 @@ structured like this:</p>
     </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"New location test"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"short_desc"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"new-location-test"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-09-10T08:21:14.853-07:00"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
     </span><span class="s2">"contacts_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/contacts"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"services_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test/services"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/new-location-test"</span><span class="p">,</span><span class="w">
@@ -2858,8 +2905,8 @@ structured like this:</p>
     </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Location with no service"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"short_desc"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"location-with-no-service"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
     </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-09-10T08:21:14.848-07:00"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"urls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
     </span><span class="s2">"contacts_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service/contacts"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"services_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service/services"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service"</span><span class="p">,</span><span class="w">
@@ -2907,7 +2954,7 @@ structured like this:</p>
 </tr>
 <tr>
 <td>email</td>
-<td>This is only useful if you&rsquo;re building an external admin interface. It allows you to determine which locations the user that just signed in has access to. When you pass in an email to the API, it first checks to see if the domain name portion of the email matches one of the <a href="https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L29-54">generic domains</a> defined in settings.yml. If it does, then it finds locations whose <code class="prettyprint">admin_emails</code> matches the user&rsquo;s email or whose <code class="prettyprint">emails</code> matches the email. Otherwise, if it doesn&rsquo;t match a generic domain, then it will find locations whose <code class="prettyprint">admin_emails</code> matches the email, or whose <code class="prettyprint">urls</code> matches the domain name, or whose <code class="prettyprint">emails</code> matches the domain name. Read the <a href="https://github.com/codeforamerica/ohana-api/blob/master/app/models/concerns/search.rb#L23-40">source code</a> for more details.</td>
+<td>This is only useful if you&rsquo;re building an external admin interface. It allows you to determine which locations the user that just signed in has access to. When you pass in an email to the API, it first checks to see if the domain name portion of the email matches one of the <a href="https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L29-54">generic domains</a> defined in settings.yml. If it does, then it finds locations whose <code class="prettyprint">admin_emails</code> matches the user&rsquo;s email or whose <code class="prettyprint">email</code> matches the email. Otherwise, if it doesn&rsquo;t match a generic domain, then it will find locations whose <code class="prettyprint">admin_emails</code> matches the email, or whose <code class="prettyprint">website</code> matches the domain name, or whose <code class="prettyprint">email</code> matches the domain name. Read the <a href="https://github.com/codeforamerica/ohana-api/blob/master/app/models/concerns/search.rb#L23-40">source code</a> for more details.</td>
 </tr>
 <tr>
 <td>keyword</td>
