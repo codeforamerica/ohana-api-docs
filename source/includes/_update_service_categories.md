@@ -34,7 +34,7 @@ curl -X PUT "https://ohana-api-demo.herokuapp.com/api/services/1/categories" -d 
   "service_areas":["Colma"],
   "status":"active",
   "website":null,
-  "wait":"No wait.",
+  "wait_time":"No wait.",
   "updated_at":"2014-10-21T16:02:55.656-07:00",
   "categories":[
     {

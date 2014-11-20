@@ -100,7 +100,7 @@ curl -X PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1" -d '{"name"
       ],
       "status": "active",
       "website": null,
-      "wait": "No wait.",
+      "wait_time": "No wait.",
       "updated_at": "2014-04-16T19:51:28.610-07:00",
       "categories": [ ],
       "contacts": [],

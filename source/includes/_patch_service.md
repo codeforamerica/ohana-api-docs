@@ -51,7 +51,7 @@ curl -X PATCH "https://ohana-api-demo.herokuapp.com/api/locations/22/services/22
   ],
   "status": "active",
   "website": "http://www.example.com",
-  "wait": "No wait to 2 weeks",
+  "wait_time": "No wait to 2 weeks",
   "updated_at": "2014-04-18T12:49:47.791-07:00",
   "categories": [],
   "contacts": [],
@@ -87,7 +87,7 @@ This endpoint updates an existing service for the specified location.
 | required_documents | array of strings | optional | The documents that are required to receive this service. You can define the list of all possible documents in [settings.yml](https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L145-150). |
 | service_areas | array of strings | optional | Cities, Counties, or other geographical area served. The values will typically be validated against a list of service areas defined in a deployment's [settings.yml](https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L152-172). |
 | status | string | required | Must be one of `active`, `defunct`, or `inactive`. |
-| wait | string | optional | Wait times associated with the service |
+| wait_time | string | optional | Wait times associated with the service |
 | website | string | optional | The service's website. Must include "http://" or "https://" |
 
 

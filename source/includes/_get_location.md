@@ -107,7 +107,7 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1"
       ],
       "status": "active",
       "website": null,
-      "wait": "No wait.",
+      "wait_time": "No wait.",
       "updated_at": "2014-04-16T19:51:28.610-07:00",
       "categories": [],
       "contacts": [],
@@ -212,11 +212,19 @@ or
 
 `GET https://ohana-api-demo.herokuapp.com/api/locations/redwood-shores-branch`
 
+### Note about location status
 For clients that display information about a particular Location, it
 might make sense to display a warning or other message if the Location
 currently doesn’t have any active services. You can determine if that’s
 the case by checking if the Location’s JSON contains an `active`
 attribute set to `false`.
+
+### Note about holiday schedules
+A location can have one more holiday schedules that describe whether or not the location is closed on a particular day of the year, or during a range of days. If the location is not closed, it will also provide `opens_at` and `closes_at` fields to describe the special holiday hours.
+
+Although the `start_date` and `end_date` fields are provided as a `Date` type with day, month, and year details, make sure to only extract the day and month because the actual year is not guaranteed to be the current year. In addition, make sure you don't extract the weekday name from this field because it's not guaranteed to be correct. The only important information from this field is the month and the day of the month, such as `December 24`.
+
+For a Ruby on Rails example of how you would display Regular and Holiday Schedules on website in a user-friendly manner, check out the [Ohana Web Search](https://github.com/codeforamerica/ohana-web-search/blob/master/app/helpers/schedules_helper.rb) source code.
 
 ### URL Parameters
 
