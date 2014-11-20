@@ -1038,7 +1038,7 @@ structured like this:</p>
       </span><span class="p">],</span><span class="w">
       </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"wait"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait."</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"wait_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait."</span><span class="p">,</span><span class="w">
       </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-04-16T19:51:28.610-07:00"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
       </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
@@ -1140,12 +1140,18 @@ structured like this:</p>
 <p>or</p>
 
 <p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api/locations/redwood-shores-branch</code></p>
-
+<h3 id='note-about-location-status'>Note about location status</h3>
 <p>For clients that display information about a particular Location, it
 might make sense to display a warning or other message if the Location
 currently doesn’t have any active services. You can determine if that’s
 the case by checking if the Location’s JSON contains an <code class="prettyprint">active</code>
 attribute set to <code class="prettyprint">false</code>.</p>
+<h3 id='note-about-holiday-schedules'>Note about holiday schedules</h3>
+<p>A location can have one more holiday schedules that describe whether or not the location is closed on a particular day of the year, or during a range of days. If the location is not closed, it will also provide <code class="prettyprint">opens_at</code> and <code class="prettyprint">closes_at</code> fields to describe the special holiday hours.</p>
+
+<p>Although the <code class="prettyprint">start_date</code> and <code class="prettyprint">end_date</code> fields are provided as a <code class="prettyprint">Date</code> type with day, month, and year details, make sure to only extract the day and month because the actual year is not guaranteed to be the current year. In addition, make sure you don&rsquo;t extract the weekday name from this field because it&rsquo;s not guaranteed to be correct. The only important information from this field is the month and the day of the month, such as <code class="prettyprint">December 24</code>.</p>
+
+<p>For a Ruby on Rails example of how you would display Regular and Holiday Schedules on website in a user-friendly manner, check out the <a href="https://github.com/codeforamerica/ohana-web-search/blob/master/app/helpers/schedules_helper.rb">Ohana Web Search</a> source code.</p>
 <h3 id='url-parameters'>URL Parameters</h3>
 <table><thead>
 <tr>
@@ -1214,12 +1220,6 @@ structured like this:</p>
 <td>Another name this location might be known by.</td>
 </tr>
 <tr>
-<td>contacts_attributes</td>
-<td>array of objects</td>
-<td>optional</td>
-<td>Points of contact at the location. See the <a href="#contacts">Contacts</a> section for the columns in that table.</td>
-</tr>
-<tr>
 <td>latitude</td>
 <td>float</td>
 <td>optional</td>
@@ -1244,40 +1244,16 @@ structured like this:</p>
 <td>General Email address for location. Emails that belong to contacts should go in the Contact object.</td>
 </tr>
 <tr>
-<td>holiday_schedules_attributes</td>
-<td>array of objects</td>
-<td>optional</td>
-<td>Holiday hours of operation for the location. See <a href="#holiday-schedules">Holiday Schedules</a> section for the columns in that table.</td>
-</tr>
-<tr>
 <td>languages</td>
 <td>array of strings</td>
 <td>optional</td>
 <td>Languages spoken at the location</td>
 </tr>
 <tr>
-<td>mail_address_attributes</td>
-<td>object</td>
-<td>optional</td>
-<td>Mailing address of location.  See the <a href="#mail-address">Mail Address</a> section for the columns in that table.</td>
-</tr>
-<tr>
 <td>name</td>
 <td>string</td>
 <td>required</td>
 <td>Name of the location</td>
-</tr>
-<tr>
-<td>phones_attributes</td>
-<td>array of objects</td>
-<td>optional</td>
-<td>Phone numbers for the location. See the <a href="#phones">Phones</a> section for the columns in that table.</td>
-</tr>
-<tr>
-<td>regular_schedules_attributes</td>
-<td>array of objects</td>
-<td>optional</td>
-<td>Regular hours of operation for the location. See <a href="#regular-schedules">Regular Schedules</a> section for the columns in that table.</td>
 </tr>
 <tr>
 <td>short_desc</td>
@@ -1405,7 +1381,7 @@ structured like this:</p>
       </span><span class="p">],</span><span class="w">
       </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="err">null</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"wait"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait."</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"wait_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait."</span><span class="p">,</span><span class="w">
       </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-04-16T19:51:28.610-07:00"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">],</span><span class="w">
       </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
@@ -2364,7 +2340,7 @@ structured like this:</p>
     </span><span class="p">],</span><span class="w">
     </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://www.example.com"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"wait"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait to 2 weeks"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"wait_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait to 2 weeks"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-04-18T12:49:47.791-07:00"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
     </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
@@ -2396,7 +2372,7 @@ structured like this:</p>
     </span><span class="p">],</span><span class="w">
     </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://www.example.com"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"wait"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait to 2 weeks"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"wait_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait to 2 weeks"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
     </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
     </span><span class="s2">"phones"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
@@ -2482,7 +2458,7 @@ structured like this:</p>
   </span><span class="p">],</span><span class="w">
   </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://www.example.com"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"wait"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait to 2 weeks"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"wait_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait to 2 weeks"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-04-18T12:49:47.791-07:00"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
   </span><span class="s2">"regular_schedules"</span><span class="p">:[],</span><span class="w">
@@ -2599,7 +2575,7 @@ structured like this:</p>
 <td style="text-align: left">Must be one of <code class="prettyprint">active</code>, <code class="prettyprint">defunct</code>, or <code class="prettyprint">inactive</code>.</td>
 </tr>
 <tr>
-<td style="text-align: left">wait</td>
+<td style="text-align: left">wait_time</td>
 <td style="text-align: left">string</td>
 <td style="text-align: left">optional</td>
 <td style="text-align: left">Wait times associated with the service</td>
@@ -2663,7 +2639,7 @@ structured like this:</p>
   </span><span class="p">],</span><span class="w">
   </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://www.example.com"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"wait"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait to 2 weeks"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"wait_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"No wait to 2 weeks"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2014-04-18T12:49:47.791-07:00"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
   </span><span class="s2">"contacts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
@@ -2782,7 +2758,7 @@ structured like this:</p>
 <td style="text-align: left">Must be one of <code class="prettyprint">active</code>, <code class="prettyprint">defunct</code>, or <code class="prettyprint">inactive</code>.</td>
 </tr>
 <tr>
-<td style="text-align: left">wait</td>
+<td style="text-align: left">wait_time</td>
 <td style="text-align: left">string</td>
 <td style="text-align: left">optional</td>
 <td style="text-align: left">Wait times associated with the service</td>
@@ -2940,7 +2916,9 @@ structured like this:</p>
 
 <p>This endpoint retrieves all locations that match the criteria based on the parameters below. Multiple parameters can be used at the same time, separated by an ampersand (<code class="prettyprint">&amp;</code>).</p>
 <h3 id='http-request'>HTTP Request</h3>
-<p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api/search{?category,email,keyword,language,lat_lng,org_name,radius,service_area}</code></p>
+<p><code class="prettyprint">GET https://ohana-api-demo.herokuapp.com/api/search{?category,email,keyword,language,lat_lng,location,org_name,radius,service_area,status}</code></p>
+<h3 id='sorting-of-results'>Sorting of results</h3>
+<p>Except for location-based and keyword-based searches, results are sorted by location <code class="prettyprint">id</code> in ascending order. Location-based searches (those that use the <code class="prettyprint">lat_lng</code> or <code class="prettyprint">location</code> parameter) are sorted by distance, with the ones closest to the search query appearing first. <code class="prettyprint">keyword</code> searches are sorted by relevance since they perform a full-text search in various fields across various tables. See the <code class="prettyprint">keyword</code> parameter description below for more details.</p>
 <h3 id='url-query-parameters'>URL Query Parameters</h3>
 <table><thead>
 <tr>
@@ -2958,7 +2936,7 @@ structured like this:</p>
 </tr>
 <tr>
 <td>keyword</td>
-<td>You can pass in one or more words, and the API will look for the occurrence of those words in the following fields: the organization&rsquo;s name, the location&rsquo;s name, the location&rsquo;s description, the service&rsquo;s name, the service&rsquo;s description, the service&rsquo;s keywords, and the service&rsquo;s categories. If more than one word is passed, the API will return matches where <strong>all</strong> of the words are present (but not necessarily as a phrase). Matches within the location&rsquo;s description, the service&rsquo;s description, and the service&rsquo;s category names are ranked higher than matches in the other fields. This full text search is performed via a Postgres <a href="https://github.com/codeforamerica/ohana-api/blob/master/db/migrate/20140508194831_update_search_vector_migration.rb">tsvector column</a> and the <a href="https://github.com/codeforamerica/ohana-api/blob/master/app/models/concerns/search.rb#L42-53">pg_search</a> gem.</td>
+<td>You can pass in one or more words, and the API will look for the occurrence of those words in the following fields: the organization&rsquo;s name, the location&rsquo;s name, the location&rsquo;s description, the service&rsquo;s name, the service&rsquo;s description, the service&rsquo;s keywords, and the service&rsquo;s categories. If more than one word is passed, the API will return matches where <strong>all</strong> of the words are present (but not necessarily as a phrase). Matches within the location&rsquo;s description, the service&rsquo;s description, and the service&rsquo;s category names are ranked higher than matches in the other fields. This full text search is performed via a Postgres <a href="https://github.com/codeforamerica/ohana-api/blob/master/db/migrate/20140508194831_update_search_vector_migration.rb">tsvector column</a> and the <a href="https://github.com/Casecommons/pg_search">pg_search</a> gem.</td>
 </tr>
 <tr>
 <td>language</td>
@@ -2967,6 +2945,10 @@ structured like this:</p>
 <tr>
 <td>lat_lng</td>
 <td>Find locations near a specific latitude and longitude. This parameter must be a comma-delimited lat,long pair of floats. For example: <code class="prettyprint">https://ohana-api-demo.herokuapp.com/api/search?lat_lng=37.477227,-122.213221</code>. By default, this will find locations within a 5-mile radius of those coordinates. To use a different radius, pass in the radius parameter (see description below).</td>
+</tr>
+<tr>
+<td>location</td>
+<td>Find locations near a specific address or ZIP code. For example: <code class="prettyprint">https://ohana-api-demo.herokuapp.com/api/search?location=94403</code>. By default, this will find locations within a 5-mile radius of those coordinates. To use a different radius, pass in the radius parameter (see description below).</td>
 </tr>
 <tr>
 <td>org_name</td>
@@ -3208,7 +3190,7 @@ curl -X PUT <span class="s2">"https://ohana-api-demo.herokuapp.com/api/services/
   </span><span class="s2">"service_areas"</span><span class="p">:[</span><span class="s2">"Colma"</span><span class="p">],</span><span class="w">
   </span><span class="s2">"status"</span><span class="p">:</span><span class="s2">"active"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"website"</span><span class="p">:</span><span class="err">null</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"wait"</span><span class="p">:</span><span class="s2">"No wait."</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"wait_time"</span><span class="p">:</span><span class="s2">"No wait."</span><span class="p">,</span><span class="w">
   </span><span class="s2">"updated_at"</span><span class="p">:</span><span class="s2">"2014-10-21T16:02:55.656-07:00"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"categories"</span><span class="p">:[</span><span class="w">
     </span><span class="p">{</span><span class="w">
