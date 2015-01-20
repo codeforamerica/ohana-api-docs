@@ -2928,7 +2928,7 @@ structured like this:</p>
 </thead><tbody>
 <tr>
 <td>category</td>
-<td>The name of the Service category. By default, Ohana API uses the <a href="http://openeligibility.org/">Open Eligibility</a> taxonomy for Human Services. The parameter must be spelled exactly as in the Open Eligibility taxonomy, including capitalizations and spaces. Some deployments might choose to use their own taxonomy. In that case, refer to their documentation.</td>
+<td>The name of the Service category. By default, Ohana API uses the <a href="http://openeligibility.org/">Open Eligibility</a> taxonomy for Human Services. The parameter must be spelled exactly as in the Open Eligibility taxonomy, including capitalizations and spaces. Some deployments might choose to use their own taxonomy. In that case, refer to their documentation. You can either pass in one category as a String or multiple categories as an Array. For example: <code class="prettyprint">https://ohana-api-demo.herokuapp.com/api/search?category[]=Transit&amp;category[]=Care</code>. This will return Locations with Services that are associated with either the <code class="prettyprint">Transit</code> or <code class="prettyprint">Care</code> categories.</td>
 </tr>
 <tr>
 <td>email</td>
