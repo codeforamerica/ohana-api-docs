@@ -26,7 +26,7 @@ curl -X PUT "https://ohana-api-demo.herokuapp.com/api/services/1/categories" -d 
   "email":null,
   "fees":"$2.50 suggested donation for lunch for age 60 or over, donations for other services appreciated. Cash and checks accepted.",
   "funding_sources":["City","County","Donations","Fees","Fundraising"],
-  "how_to_apply":"Walk in or apply by phone.",
+  "application_process":"Walk in or apply by phone.",
   "keywords":[],
   "languages":[],
   "name":"Fair Oaks Adult Activity Center",

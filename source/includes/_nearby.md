@@ -29,10 +29,10 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/22/nearby?radius=2" -H 
     "slug": "new-location-test",
     "address": {
       "id": 28,
-      "street_1": "1290 Ridder Park Drive",
-      "street_2": null,
+      "address_1": "1290 Ridder Park Drive",
+      "address_2": null,
       "city": "San Francisco",
-      "state": "CA",
+      "state_province": "CA",
       "postal_code": "94103"
     }
   }

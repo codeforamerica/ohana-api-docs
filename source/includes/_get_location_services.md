@@ -39,7 +39,7 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1/services" -H "User-Ag
       "Federal",
       "State"
     ],
-    "how_to_apply": "Walk in or apply by phone or mail",
+    "application_process": "Walk in or apply by phone or mail",
     "keywords": [
       "Salud",
       "Medicina"
@@ -78,7 +78,7 @@ curl "https://ohana-api-demo.herokuapp.com/api/locations/1/services" -H "User-Ag
       "Federal",
       "State"
     ],
-    "how_to_apply": "Walk in or apply by phone or mail",
+    "application_process": "Walk in or apply by phone or mail",
     "keywords": [
       "Ruby on Rails/Postgres/Redis",
       "testing"

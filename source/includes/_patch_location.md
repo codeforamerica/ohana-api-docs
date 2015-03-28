@@ -37,10 +37,10 @@ curl -X PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1" -d '{"name"
   "url": "https://ohana-api-demo.herokuapp.com/api/locations/redwood-shores-branch",
   "address": {
     "id": 14,
-    "street_1": "399 Marine Parkway",
-    "street_2": null,
+    "address_1": "399 Marine Parkway",
+    "address_2": null,
     "city": "Redwood City",
-    "state": "CA",
+    "state_province": "CA",
     "postal_code": "94065"
   },
   "contacts": [
@@ -56,10 +56,10 @@ curl -X PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1" -d '{"name"
   "mail_address": {
     "id": 14,
     "attention": "Redwood Shores Branch",
-    "street_1": "399 Marine Parkway",
-    "street_2": null,
+    "address_1": "399 Marine Parkway",
+    "address_2": null,
     "city": "Redwood City",
-    "state": "CA",
+    "state_province": "CA",
     "postal_code": "94065"
   },
   "phones": [
@@ -85,7 +85,7 @@ curl -X PATCH "https://ohana-api-demo.herokuapp.com/api/locations/1" -d '{"name"
       "funding_sources": [
         "City"
       ],
-      "how_to_apply": "Walk in. Proof of California residency required to receive a library card.",
+      "application_process": "Walk in. Proof of California residency required to receive a library card.",
       "keywords": [
         "EDUCATION SERVICES",
         "Library",

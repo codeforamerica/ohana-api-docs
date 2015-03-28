@@ -41,10 +41,10 @@ curl "https://ohana-api-demo.herokuapp.com/api/organizations/1/locations" -H "Us
     "url": "https://ohana-api-demo.herokuapp.com/api/locations/new-location-test",
     "address": {
       "id": 28,
-      "street_1": "1290 Ridder Park Drive",
-      "street_2": null,
+      "address_1": "1290 Ridder Park Drive",
+      "address_2": null,
       "city": "San Francisco",
-      "state": "CA",
+      "state_province": "CA",
       "postal_code": "94103"
     },
     "organization": {
@@ -85,10 +85,10 @@ curl "https://ohana-api-demo.herokuapp.com/api/organizations/1/locations" -H "Us
     "url": "https://ohana-api-demo.herokuapp.com/api/locations/location-with-no-service",
     "address": {
       "id": 27,
-      "street_1": "155 9th St",
-      "street_2": null,
+      "address_1": "155 9th St",
+      "address_2": null,
       "city": "San Francisco",
-      "state": "CA",
+      "state_province": "CA",
       "postal_code": "94103"
     },
     "organization": {

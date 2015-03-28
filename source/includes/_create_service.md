@@ -32,7 +32,7 @@ curl -X POST "https://ohana-api-demo.herokuapp.com/api/locations/1/services" -d 
     "Federal",
     "State"
   ],
-  "how_to_apply": "Walk in or apply by phone or mail",
+  "application_process": "Walk in or apply by phone or mail",
   "keywords": [
     "Salud",
     "Medicina"
@@ -71,6 +71,7 @@ This endpoint creates a new service for a location.
 |:-----|:-----|:---------|:-------|
 | accepted_payments | Array of Strings | optional | Methods of payment for this service, such as `['Cash', 'Credit Card', 'Medicare']`. You can define the list of all possible payment methods in [settings.yml](https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L9-19). |
 | alternate_name | string | optional | Another name this Service might be known by. |
+| application_process | string | optional | Description of the service's application process |
 | audience | string | optional | Group of people served |
 | categories | array of objects | optional | Categories assigned to the service based on the Open Eligibility taxonomy. See the [Categories](#categories) section for more details. |
 | description | string | required | Description of the service provided |
@@ -78,7 +79,6 @@ This endpoint creates a new service for a location.
 | email | string | optional | The service's main email address. |
 | fees | string | optional | Fees charged to receive the service |
 | funding_sources | array of strings | optional | Source of funds used to support the service |
-| how_to_apply | string | required | Description of the service's application process |
 | keywords | array of strings | optional | Keywords that people might use to search for this service, but that you might not want to include in the service description (such as common misspellings). |
 | languages | array of strings | optional | Languages in which this service is provided. You can define the list of all possible languages in [settings.yml](https://github.com/codeforamerica/ohana-api/blob/master/config/settings.yml#L56-143). |
 | name | string | required | Name of the service |
