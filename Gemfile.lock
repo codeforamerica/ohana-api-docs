@@ -102,7 +102,7 @@ GEM
     rb-fsevent (0.9.5)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
-    redcarpet (3.3.1)
+    redcarpet (3.3.2)
     ref (1.0.5)
     rouge (1.8.0)
     ruby18_source_location (0.2)
