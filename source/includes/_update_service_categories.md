@@ -2,15 +2,15 @@
 
 ```ruby
 # Update categories for the service with id 1 by passing in an array of
-# oe_ids.
-Ohanakapa.put('services/1/categories', { oe_ids: ['101', '102'] })
+# taxonomy_ids.
+Ohanakapa.put('services/1/categories', { taxonomy_ids: ['101', '102'] })
 ```
 
 ```shell
 # Update categories for the service with id 1 by passing in an array of
-# oe_ids.
+# taxonomy_ids.
 
-curl -X PUT "https://ohana-api-demo.herokuapp.com/api/services/1/categories" -d '{"oe_ids": ["101", "102"]}' -H "X-Api-Token: your_token" -H "Content-Type: application/json"
+curl -X PUT "https://ohana-api-demo.herokuapp.com/api/services/1/categories" -d '{"taxonomy_ids": ["101", "102"]}' -H "X-Api-Token: your_token" -H "Content-Type: application/json"
 ```
 
 > When successful, the above command returns the updated service with a `200` HTTP status code:
@@ -40,14 +40,14 @@ curl -X PUT "https://ohana-api-demo.herokuapp.com/api/services/1/categories" -d 
     {
       "id": 1,
       "depth": 0,
-      "oe_id": "101",
+      "taxonomy_id": "101",
       "name": "Emergency",
       "parent_id": null
     },
     {
       "id": 17,
       "depth": 0,
-      "oe_id": "102",
+      "taxonomy_id": "102",
       "name": "Food",
       "parent_id": null
     }
@@ -65,7 +65,7 @@ This endpoint updates a service with the specified categories.
 
 | Name | Type | Requirement | Detail |
 |:-----|:-----|:---------|:-------|
-| oe_ids | Array | required | An array of valid `oe_id`s. |
+| taxonomy_ids | Array | required | An array of valid `taxonomy_id`s. |
 
 <aside class="warning">All PUT requests require a valid token passed via the
 `X-Api-Token` HTTP header</aside>
