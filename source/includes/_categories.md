@@ -23,28 +23,28 @@ curl "https://ohana-api-demo.herokuapp.com/api/categories" -H "User-Agent: MyCli
   {
     "id": 1,
     "depth": 0,
-    "oe_id": "101",
+    "taxonomy_id": "101",
     "name": "Emergency",
     "parent_id": null
   },
   {
     "id": 2,
     "depth": 1,
-    "oe_id": "101-01",
+    "taxonomy_id": "101-01",
     "name": "Disaster Response",
     "parent_id": 1
   },
   {
     "id": 3,
     "depth": 1,
-    "oe_id": "101-02",
+    "taxonomy_id": "101-02",
     "name": "Emergency Cash",
     "parent_id": 1
   },
   {
     "id": 4,
     "depth": 2,
-    "oe_id": "101-02-01",
+    "taxonomy_id": "101-02-01",
     "name": "Help Pay for Food",
     "parent_id": 3
   }
