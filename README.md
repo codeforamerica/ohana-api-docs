@@ -55,7 +55,7 @@ the browser should automatically update.
     git push origin master
 
     # after verifying that the code has been pushed to GitHub
-    rake publish
+    ./deploy.sh
 
 Learn more about [editing Slate markdown](https://github.com/lord/slate/wiki/Markdown-Syntax).
 
