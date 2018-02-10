@@ -1,12 +1,12 @@
 ---
 title: Ohana API Documentation
 
-language_tabs:
+language_tabs: # must be one of https://git.io/vQNgJ
   - shell
   - ruby
 
 toc_footers:
-  - <a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a>
+  - <a href='http://github.com/lord/slate'>Documentation Powered by Slate</a>
 
 includes:
   - version

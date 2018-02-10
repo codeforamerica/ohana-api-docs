@@ -1,26 +1,12 @@
+ruby '>=2.5.0'
 source 'https://rubygems.org'
 
-gem 'middleman', '~> 3.3'
-
-# For syntax highlighting
-gem 'middleman-syntax'
-
-# Plugin for middleman to generate Github pages
-gem 'middleman-gh-pages'
-
-# Live-reloading plugin
-gem 'middleman-livereload', '~> 3.3'
-
-gem 'redcarpet', '~> 3.2'
-
-# For faster file watcher updates on Windows:
-gem 'wdm', '~> 0.1.0', platforms: [:mswin, :mingw]
-
-# Cross-templating language block fix for Ruby 1.8
-platforms :mri_18 do
-  gem 'ruby18_source_location'
-end
-
-gem 'rake', '~> 10.3'
-
-gem 'therubyracer', platforms: :ruby
+# Middleman
+gem 'middleman', '~>4.2.1'
+gem 'middleman-autoprefixer', '~> 2.7.0'
+gem 'middleman-livereload'
+gem "middleman-sprockets", "~> 4.1.0"
+gem 'middleman-syntax', '~> 3.0.0'
+gem 'nokogiri'
+gem 'redcarpet', '~> 3.4.0'
+gem 'rouge', '~> 2.0.5'
