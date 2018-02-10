@@ -1,7 +1,7 @@
 Ohana API Documentation
 =======================
 
-A static website for the Ohana API documentation, built with [Slate](https://github.com/tripit/slate).
+A static website for the Ohana API documentation, built with [Slate](https://github.com/lord/slate).
 
 
 Getting Started
@@ -12,8 +12,10 @@ Getting Started
 You'll need to have the following software packages installed on your computer:
 
 - Git
-- Ruby 2.1+
-- RVM
+- Ruby 2.5.0
+- A Ruby version manager, such as RVM, rbenv, or chruby
+- Bundler — If Ruby is already installed, but the `bundle` command doesn't work,
+run `gem install bundler` in a terminal.
 
 If you already have all of the prerequisites installed, you can skip to the
 next section. Otherwise, install the [Build tools][build-tools] and
@@ -40,7 +42,7 @@ Clone it on your computer and navigate to the project's directory:
 
 ### Run the website
 
-    middleman server
+    bundle exec middleman server
 
 You can now see the docs at <http://localhost:4567>. The first three sections
 are in `source/index.md`, and the rest of the documentation is in various
@@ -55,4 +57,9 @@ the browser should automatically update.
     # after verifying that the code has been pushed to GitHub
     rake publish
 
-Learn more about [editing Slate markdown](https://github.com/tripit/slate/wiki/Markdown-Syntax).
+Learn more about [editing Slate markdown](https://github.com/lord/slate/wiki/Markdown-Syntax).
+
+### Note on JavaScript Runtime
+For those who don't have JavaScript runtime or are experiencing JavaScript
+runtime issues with ExecJS, it is recommended to add the `rubyracer` gem to
+your gemfile and run `bundle` again.
