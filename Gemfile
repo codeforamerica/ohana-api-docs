@@ -2,7 +2,7 @@ ruby '>= 2.5.0'
 source 'https://rubygems.org'
 
 # Middleman
-gem 'middleman', '~> 4.3'
+gem 'middleman', '~> 4.3', '>= 4.3.8'
 gem 'middleman-autoprefixer', '~> 2.7.0'
 gem 'middleman-livereload'
 gem 'middleman-syntax', '~> 3.0.0'
