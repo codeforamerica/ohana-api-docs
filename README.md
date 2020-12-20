@@ -12,17 +12,15 @@ Getting Started
 You'll need to have the following software packages installed on your computer:
 
 - Git
-- Ruby 2.5.0
-- A Ruby version manager, such as RVM, rbenv, or chruby
+- Ruby 2.7.2
+- A Ruby version manager, such as RVM, rbenv, chruby, or asdf
 - Bundler — If Ruby is already installed, but the `bundle` command doesn't work,
 run `gem install bundler` in a terminal.
 
 If you already have all of the prerequisites installed, you can skip to the
-next section. Otherwise, install the [Build tools][build-tools] and
-[Ruby with RVM][ruby].
+next section. Otherwise, run this [script].
 
-[build-tools]: https://github.com/codeforamerica/howto/blob/master/Build-Tools.md
-[ruby]: https://github.com/codeforamerica/howto/blob/master/Ruby.md
+[script]: https://github.com/monfresh/laptop
 
 ### Install the code
 
