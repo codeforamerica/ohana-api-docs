@@ -101,7 +101,7 @@ GEM
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    redcarpet (3.4.0)
+    redcarpet (3.5.1)
     rexml (3.2.4)
     rouge (2.0.7)
     sassc (2.4.0)
@@ -126,11 +126,11 @@ DEPENDENCIES
   middleman-livereload
   middleman-syntax (~> 3.0.0)
   nokogiri
-  redcarpet (~> 3.4.0)
+  redcarpet (~> 3.5.1)
   rouge (~> 2.0.5)
 
 RUBY VERSION
    ruby 2.5.0p0
 
 BUNDLED WITH
-   2.2.2
+   1.17.3
