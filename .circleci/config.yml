@@ -1,0 +1,15 @@
+version: 2.1
+orbs:
+  ruby: circleci/ruby@1.1.2
+
+jobs:
+  build:
+    docker:
+      - image: 'cimg/ruby:2.7-node'
+    executor: ruby/default
+    steps:
+      - checkout
+      - ruby/install-deps
+      - run:
+          name: Build site
+          command: bundle exec middleman build
