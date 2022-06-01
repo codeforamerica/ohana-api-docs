@@ -12,7 +12,7 @@ Getting Started
 You'll need to have the following software packages installed on your computer:
 
 - Git
-- Ruby 2.7.2
+- Ruby 2.7.6
 - A Ruby version manager, such as RVM, rbenv, chruby, or asdf
 - Bundler — If Ruby is already installed, but the `bundle` command doesn't work,
 run `gem install bundler` in a terminal.
