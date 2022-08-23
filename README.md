@@ -18,9 +18,9 @@ You'll need to have the following software packages installed on your computer:
 run `gem install bundler` in a terminal.
 
 If you already have all of the prerequisites installed, you can skip to the
-next section. Otherwise, run this [script].
+next section. Otherwise, follow this [guide for installing Ruby on a Mac](https://www.moncefbelyamani.com/how-to-install-xcode-homebrew-git-rvm-ruby-on-mac/),  or buy the [Ruby on Mac] script that can set everything up for you in minutes.
 
-[script]: https://github.com/monfresh/laptop
+[Ruby on Mac]: https://www.rubyonmac.dev/pricing
 
 ### Install the code
 
